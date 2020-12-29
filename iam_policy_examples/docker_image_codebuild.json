@@ -1,0 +1,36 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": "ecr:*",
+            "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetBucketAcl",
+                "logs:CreateLogGroup",
+                "logs:PutLogEvents",
+                "s3:PutObject",
+                "s3:GetObject",
+                "codebuild:CreateReportGroup",
+                "codebuild:CreateReport",
+                "logs:CreateLogStream",
+                "codebuild:UpdateReport",
+                "codebuild:BatchPutCodeCoverages",
+                "s3:GetBucketLocation",
+                "codebuild:BatchPutTestCases",
+                "s3:GetObjectVersion"
+            ],
+            "Resource": [
+                "arn:aws:s3:::codepipeline-eu-west-1-*",
+                "arn:aws:logs:eu-west-1:*:log-group:/aws/codebuild/*",
+                "arn:aws:logs:eu-west-1:*:log-group:/aws/codebuild/*:*",
+                "arn:aws:codebuild:eu-west-1:*:report-group/*"
+            ]
+        }
+    ]
+}
