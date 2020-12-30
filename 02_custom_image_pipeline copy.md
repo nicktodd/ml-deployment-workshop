@@ -24,7 +24,7 @@ Broadly, you will need to complete the following tasks.
 
 ## 1. Get the Project into your own Git Repository
 
-1. The repository URL for the example can be found here: https://github.com/nicktodd/machinelearning-custom-image
+1. The repository URL for the example can be found here: https://github.com/nicktodd/custom-image-anomaly
 
 2. Fork this repository into your own Git repository. Your repository needs to be GitHub or CodeCommit as these are supported by CodePipeline and CodeBuild. We suggest you use GitHub since you will be able to authenticate more easily due to company restrictions on Code Commit.
 
@@ -33,14 +33,13 @@ Broadly, you will need to complete the following tasks.
 
 1. Using your preferred editor, open the `buildspec.yml` file in your new Git project.
 
-2.  Note the various sections. In the first section, we are logging into the Docker registry for our own ECR registry, and then also for the ECR registry of the location of our parent Docker image.
+2.  Note the various sections. In the first section, we are logging into the Docker registry for our own ECR registry. The parent image is a Ubuntu standard image in Dockerhub.
 
 ```
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin xxx.dkr.ecr.eu-west-1.amazonaws.com 
-      - aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 520713654638.dkr.ecr.eu-west-1.amazonaws.com
 ```
 
 3. Review the commands in the build section. We are building a Docker image from the Dockerfile.
@@ -49,11 +48,11 @@ Broadly, you will need to complete the following tasks.
  build:
     commands:
       - account=$(aws sts get-caller-identity --query Account --output text)      
-      - docker build -t custommlimage:latest .
-      - docker tag custommlimage:latest ${account}.dkr.ecr.eu-west-1.amazonaws.com/custommlimage:latest
+      - docker build -t anomalyimage:latest .
+      - docker tag anomalyimage:latest ${account}.dkr.ecr.eu-west-1.amazonaws.com/anomalyimage:latest
 ```
 
-4. You must change the image name in the file to be something unique to you. You could simply add your initials on the end of the image name and tag. In simple terms, change every reference to `customimage` to something else, eg. `customimage-nt`.
+4. You must change the image name in the file to be something unique to you. You could simply add your initials on the end of the image name and tag. In simple terms, change every reference to `anomalyimage` to something else, eg. `anomalyimage-nt`.
 
 Note the commands we are using to obtain our account ID. The service being used is the Secure Token Service, STS.
 
@@ -62,18 +61,27 @@ Note the commands we are using to obtain our account ID. The service being used 
 ```
 post_build:
     commands:
-      - docker push ${account}.dkr.ecr.eu-west-1.amazonaws.com/custommlimage:latest
+      - docker push ${account}.dkr.ecr.eu-west-1.amazonaws.com/anomalyimage:latest
 ```
-5. You will also need to change the name here from `customimage` to your new name. So make the change now and save the file.
+5. You will also need to change the name here from `anomalyimage` to your new name. So make the change now and save the file.
 
-6. Now open the Dockerfile. We don't need to spend a long time on this, but review the core sections. You can see that the parent image is a basic Ubuntu image! Nothing will be available, so in our RUN commands we are installing both Python and also the required Python libraries. Lastly, we are copying our ML script into the image (\coe\main.py). It is really only a fake script as you can see if you review it, but our focus is not the algorithm.
+6. Now open the Dockerfile. We don't need to spend a long time on this, but review the core sections. You can see that the parent image is a basic Ubuntu image! Nothing will be available, so in our RUN commands we are installing both Python and also the required Python libraries and various other required libraries. In addition, we are copying over the ML code into the image and giving it write permissions.
+
+Note the presence of two files particularly:
+
+* anomaly-model/train
+* anomaly-model/serve
+
+These are the two files that SageMaker will use when it runs the model. To do training, SageMaker runs `docker run image-name train` and when used for predictions it uses `docker run image-name serve`. 
+
+If you are interested in the Algorithm and how it works, feel free to explore the various files located in the `anomaly-model` directory.
 
 
 ## 3. Set up the CodeBuild Project
 
 6. Using the `AWS Web Console`, navigate to the `CodeBuild` service.
 
-7. Click `Create Build Project`. Set the name to be [YourInitials]-CustomImageBuild. for the Source, link the project to your Git repository that you created earlier in step 1.
+7. Click `Create Build Project`. Set the name to be `[YourInitials]-AnomalyImageBuild`. For the Source, link the project to your Git repository that you created earlier in step 1.
 
 8. For the Environment, this is where you select the Docker image that will be used to complete your build. We just need a standard Amazon Linux for x86 processors.
 
@@ -85,6 +93,7 @@ post_build:
 
 12. The rest can be left as defaults, so you can simply select `Create build project`.
 
+13. Finally, in the AWS Web Console, head over the Elastic Container Registry service and create a `Repository` with the same name as your image, eg. `anomalyimage-nt`. Use all the default settings when you create it.
 
 ## 4. Define the relevant IAM policies and roles
 
@@ -99,12 +108,13 @@ An example is located in[iam_policy_examples/docker_image_codebuild.json](iam_po
 
 2. If it works, you will see a new image in your ECR repository. YOu can find it by navigating to the Elastic Container Registry it in the Amazon Web Console.
 
+3. If it fails, check the error log. The chances are you have either got your repository name wrong or you have not added the relevant permissions to your CodeBuild IAM role policy.
 
-## Create a Second CodeBuild Project to complete the machine learning
+## Create a Second CodeBuild Project to complete the Machine Learning
 
 So you now have a CodeBuild step that will create the Docker image. What we will now do is create another CodeBuild step that will do the machine learning. It could be done all in one, but this separation gives us more flexibility when running our actions.
 
-1. Create a new CodeBuild project called `CustomImageMachineLearn[YourInitials]`.
+1. Create a new CodeBuild project called `CreateAnomalyModel[YourInitials]`.
 
 2. Go through the steps linking it to your Source repository as before, and then for the buildspec file specify a different name this time, as the buildspec is now called `buildspec-model.yml`.
 
@@ -112,15 +122,15 @@ So you now have a CodeBuild step that will create the Docker image. What we will
 
 4. Locate the Role name variable in line 10 and replace it with your AmazonSagemaker execution role (there is probably one already in your account).
 
-5. On line 15, update the prefix variable to also include your initials at the end. eg:
+5. On line 17, update the prefix variable to also include your initials just before the date stamp. eg:
 
 ```
-prefix = 'custom-ml-image-nt'
+prefix = 'anomaly-ml-image-nt' + dateAsString
 ```
 
-6. On line 21, replace the image name with your chosen image name from your build step from earlier on.
+6. On line 24, replace the image name with your chosen image name from your build step from earlier on.
 
-Finally, review the rest of the file. It should look familiar as it is using the SageMaker API to create a model based on learning from a dummy CSV file.
+You will see that an Estimator is created in order for us to do the Machine Learning. As it happens, this particular algorithm doesn't really need to do any learning, so actually not much is happening here! However, SageMaker requires a Model to be created so we have to do something. If you are interested, you can review the anomaly-model/train Python script to see what is actually happening.
 
 You will also note that it creates a parameter file, similar to the previous example ready for deployment by Cloudformation.
 
@@ -136,13 +146,38 @@ The pipeline should look like the below:
 
 You can set this pipeline up for yourself using your experience from the previous pipeline to remind you how to do it. We recommend using the Create Pipeline wizard as it is the least painless option. A few things to bear in mind:
 
-1. You will have to go back into the pipeline to amend the Cloudformation parameter location as you did in the previous exercise as the BuildArtifact option will be missing
-   
+1. You will have to go back into the pipeline to amend the Cloudformation parameter location as you did in the previous exercise as the BuildArtifact option will be missing.
+
 2. You will also have to add in the second Action Group after the pipeline has been created. Since when you use the wizard it assumes only one build step, but you will have two.
 
-## Reviewing the Failing Cloudformation Template Deployment
+3. Below is a screen shot of the configuration for your CodeBuild for the Docker image:
+
+![Docker Image CodeBuild Step](images/codebuild-config-docker.png)
+
+4. You must ensure that you add a name to the BuildArtifact of the second Action that building the model, otherwise the CloudFormation template will not get the parameter file made available to it. The tell tail error is rather vague S3 bucket request error. A sample screenshot for your second CodeBuild is shown below:
+
+![Model Creation CodeBuild Step](images/codebuild-config-model.png)
 
 
+5. You can now try running the pipeline. If you are incredibly skillful (or lucky!)
+ it will work first time. If not, it is a matter of debugging the process.
+
+
+## Reviewing the Deployment
+
+1. Using the AWS Web Console, navigate to the SageMaker service, and then click on the Endpoints link on the left.
+
+2. Locate your endpoint in the list and select it.
+
+3. You will see your Endpoint is `In Service`.
+
+![Endpoint](images/endpoint-inservice.png)
+
+4. Scroll down and you will see the graphs. Locate the link to `View Logs`and click it.
+
+5. Select the link to the `log stream`. You will see all the health checks returning a healthy HTTP 200 response.
+
+![Log Events](images/log-events.png)
 
 
 ## Troubleshooting
