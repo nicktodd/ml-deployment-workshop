@@ -1,0 +1,38 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "polly:*",
+                "transcribe:*",
+                "translate:*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": "s3:*",
+            "Resource": [
+                "arn:aws:s3:::transcribe.srt.conygre.com",
+                "arn:aws:s3:::transcribe.json.conygre.com",
+                "arn:aws:s3:::transcribe.input.conygre.com",
+                "arn:aws:s3:::transcribe.ssml.conygre.com",
+                "arn:aws:s3:::transcribe.audio.conygre.com",
+                "arn:aws:s3:::transcribe.srt.conygre.com/*",
+                "arn:aws:s3:::transcribe.json.conygre.com/*",
+                "arn:aws:s3:::transcribe.input.conygre.com/*",
+                "arn:aws:s3:::transcribe.ssml.conygre.com/*",
+                "arn:aws:s3:::transcribe.audio.conygre.com/*"
+            ]
+        },
+        {
+            "Sid": "VisualEditor2",
+            "Effect": "Allow",
+            "Action": "logs:*",
+            "Resource": "arn:aws:logs:*:*:*"
+        }
+    ]
+}

@@ -1,0 +1,41 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "states:*",
+                "iam:GetRole",
+                "iam:PassRole",
+                "lambda:*"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetBucketAcl",
+                "logs:CreateLogGroup",
+                "logs:PutLogEvents",
+                "s3:PutObject",
+                "s3:GetObject",
+                "codebuild:CreateReportGroup",
+                "codebuild:CreateReport",
+                "logs:CreateLogStream",
+                "codebuild:UpdateReport",
+                "codebuild:BatchPutCodeCoverages",
+                "s3:GetBucketLocation",
+                "codebuild:BatchPutTestCases",
+                "s3:GetObjectVersion"
+            ],
+            "Resource": [
+                "arn:aws:s3:::codepipeline-us-east-1-*",
+                "arn:aws:codebuild:us-east-1:12345:report-group/BuildAndDeployVideoTranscoderStepFunctions-*",
+                "arn:aws:logs:us-east-1:12345:log-group:/aws/codebuild/BuildAndDeployVideoTranscoderStepFunctions",
+                "arn:aws:logs:us-east-1:12345:log-group:/aws/codebuild/BuildAndDeployVideoTranscoderStepFunctions:*"
+            ]
+        }
+    ]
+}
