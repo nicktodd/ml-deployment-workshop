@@ -167,7 +167,17 @@ Make sure you create any buckets in the same region as where you are deploying t
 
 3. The `Resources` section then defines all the Lambdas, the StateMachine (step functions), and each Lambda is being assigned a LambdaInvoke policy.
 
-4. Finally, set the input and output environment variables for the Lambdas. Although we have a global set of environment variables, only the final Lambda uses the set as it stands right now.
+4. Set the input and output environment variables for the Lambdas. Although we have a global set of environment variables, only the final Lambda uses the set as it stands right now.
+
+5. the SAM command line also provides a convenient file that allows you to set all of the default options. Open the file `samconfig.toml`. One of the entries is the region. You will need to change this to `eu-west-1`. Save your change.
+
+6. Commit and push your changes to git.
+
+```
+git add *
+git commit -m "Made my final modifications"
+git push
+```
 
 ## 5. Addressing the Permissions
 
@@ -177,7 +187,12 @@ You will need to create an equivalent policy to assign to your Lambdas. This can
 
 In our example, to keep it more straightfoward, we have created one policy with the relevant permissions required for all the Lambdas to execute the various functions. You could in theory have a different policy for each Lambda which would be better for the least privilege principle. 
 
-1. A sample policy is located here: [IAM Policy](iam_policy_examples/s3_transcribe_policy.json). You will need to create a similar policy in your account and update the SAM file Lambdas to use your policy.
+1. A sample policy is located here: [IAM Policy](iam_policy_examples/s3_transcribe_policy.json). You will need to create a similar policy in your account and update the SAM file Lambdas to use your policy. 
+
+
+## Optional Build and Deploy the Application Manually
+
+Sometimes it is helpful to try and deploy the application manually. That way you can see how it is meant to be 
 
 ## 6. Set up the CodeBuild Project
 

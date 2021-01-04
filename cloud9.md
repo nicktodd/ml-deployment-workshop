@@ -23,3 +23,8 @@ Once the environment has been created. You will be able to access it via a Web b
 4. Confirm the change, and now we need to restart the instance, so click on Instances in the left pane, and then locate your Cloud9 machine, right click on it, and choose Reboot instance.
 
 5. Return to your Cloud9 IDE interface and once it has rebooted you will now have enough disk space for the Docker images to be downloaded as and when you need them.
+
+Further information on setting up Cloud9 can be found here:
+
+https://cicd-pipeline-cdk-eks-bluegreen.workshop.aws/en/intro/cloud9.html
+
