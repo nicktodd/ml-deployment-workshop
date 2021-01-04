@@ -34,10 +34,22 @@ Broadly, you will need to complete the following tasks.
 1. The repository URL for the example can be found here: https://github.com/nicktodd/video-translation-stepfunctions
 
 
-2. Fork this repository into your own Git repository. Your repository needs to be GitHub or CodeCommit as these are supported by CodePipeline and CodeBuild. We suggest you use GitHub since you will be able to authenticate more easily due to company restrictions on Code Commit.
+2. Using the AWS Console, create a Repository in Code Commit or use Github if you prefer, and then clone it in your Cloud9 environment.
+
+3. Also clone the sample project referenced in step 1, and then copy the code over into your empty repository. 
+
+4. CD into your new repository, and add the files to your Git and push them. This can be done using:
+
+```
+git add *
+git commit -m "Initial Commit"
+git push
+```
 
 
 ## 2. Review the buildspec.yml
+
+From now on, work in your Git project. If you are in Cloud9, whenever you see a reference to your preferred editor, then that will be your Cloud9 environment.
 
 1. Using your preferred editor, open the `buildspec.yml` file in your new Git project.
 
