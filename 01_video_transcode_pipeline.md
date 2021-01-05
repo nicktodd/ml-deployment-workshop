@@ -195,7 +195,7 @@ git commit -m "Made my final modifications"
 git push
 ```
 
-## 5. Addressing the Permissions
+## 6. Addressing the Permissions
 
 You will have noticed that all of the Lambdas have the same policy applied to them called S3_Transcribe_Policy.
 
@@ -210,7 +210,7 @@ In our example, to keep it more straightfoward, we have created one policy with 
 
 Sometimes it is helpful to try and deploy the application manually. That way you can see how it is meant to be 
 
-## 6. Set up the CodeBuild Project
+## 7. Set up the CodeBuild Project
 
 1. Using the `AWS Web Console`, navigate to the `CodeBuild` service.
 
@@ -229,13 +229,13 @@ Sometimes it is helpful to try and deploy the application manually. That way you
 An example is located in[iam_policy_examples/transcribe_codebuild.json](iam_policy_examples/transcribe_codebuild.json).
 
 
-## 7. Run the CodeBuild Project
+## 8. Run the CodeBuild Project
 
 1. Commit and push your changes to Git, and this should trigger your build. Check that it behaves as expected.
 
 2. If it works, you will find a new deployment in CloudFormation and if you visit the Step Function service, you will see your new Step functions.
 
-## 8. Test the Step Functions
+## 9. Test the Step Functions
 
 1. To test the application, place a sample video into your bucket that you set up to be the one where videos to be processed end up.
 
@@ -256,7 +256,7 @@ Let it run through, if all is good, you will see a series of green stages.
 Finally, how do we watch the final output to see if it works?
 
 
-## 9. Play the Video
+## 10. Play the Video
 
 In order to play the video, you require something capable of playing video that has subtitles. 
 
@@ -284,7 +284,7 @@ https://s3.us-east-1.amazonaws.com/transcribe.output.conygre.com/testmedia.html
 
 That's it! You have successfully set up and deployed a series of Lambda functions that run in sequence using Step Functions. Your deployment is carried out using SAM, and you used CodeBuild to automate it.
 
-## 10. Optional Extensions
+## 11. Optional Extensions
 
 If you have finished, and others seem to be still going. Here are some things you might wish to try to improve the example.
 
