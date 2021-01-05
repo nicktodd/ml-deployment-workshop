@@ -122,11 +122,9 @@ response = polly.start_speech_synthesis_task(
 ```
 13. The fifth and final function can be located here: `functions\lambda5_mediaconvert\lambda_handler.js`.  The role of this function is to trigger the MediaEncoder service that will create our final video outputs. This one is written in JavaScript largely because the request parameter is a large JSON object which is easier to pass in from a JavaScript function. If you take a look a the code you will see what is meant!
 
-1. You do need to update one line of code in this Lambda. If you locate line 31 where the MediaConvert endpoint is located. This endpoint is unique per account and region. You need to change this to the endpoint for your AWS Account.
+14. You do need to update one line of code in this Lambda. If you locate line 31 where the MediaConvert endpoint is located. This endpoint is unique per account and region. You need to change this to the endpoint for your AWS Account. To find the URL, using the Amazon Web console, navigate to the MediaConvert service, and click on  `Account`. Ensure you are in the eu-west-1 region, and then copy the API Endpoint to the clipboard. 
 
-2. Using the Amazon Web console, navigate to the MediaConvert service, and click on  `Account`. Ensure you are in the eu-west-1 region, and then copy the API Endpoint to the clipboard. 
-
-3. Replace the endpoint in the code with the one you have copied and save your changes.
+15. Replace the endpoint in the code with the one you have copied and save your changes.
 
 ## 4. Review the StepFunctions Flow
 
