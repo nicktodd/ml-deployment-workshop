@@ -39,9 +39,7 @@ Broadly, you will need to complete the following tasks.
 
 1. The repository URL for the example can be found here: https://github.com/nicktodd/machinelearning-train
 
-2. Fork this repository into your own Git repository. Your repository needs to be GitHub or CodeCommit as these are supported by CodePipeline and CodeBuild. We suggest you use GitHub since you will be able to authenticate more easily due to company restrictions on Code Commit.
-
-
+2. Fork this repository into your own Git repository. Your repository needs to be GitHub or CodeCommit as these are supported by CodePipeline and CodeBuild. We suggest you use CodeCommit but either will work fine.
 
 
 ## 2. Create the DynamoDB table to maintain the model registry
@@ -70,43 +68,75 @@ Broadly, you will need to complete the following tasks.
 
 6. The rest can be left as defaults, so you can simply select `Create build project`.
 
+7. You will need to add some additional permissions to the generated CodeBuild role through a policy we have created for you. This will allow it to do the tasks it needs to do in order to run successfully. To do this, in your CodeBuild project, click on the `Build Details` tab, and then right click on the link to the `Service Role`, and click `Open in new Tab` or your browsers equivalent.
+
+8. In the `Permissions` section that then appears, click `Attach Policies`.
+
+9. In the `Filter Policies`, enter in the text `StepFunctionsWorkflowExecutionPolicy`. 
+
+
+10. Select the located policy, and now search for S3FullAccess and attach that policy. Selct the located policy, and now search for LambdaFullAccess, and select the located policy. click `Attach Policy`.
+
+You will now be setting up the permissions for the various components created by the build script.
 
 ## 4. Define the relevant IAM policies and roles
 
-You will need to set up a number of IAM policies and roles to be set up, specifically:
+The build process for this pipeline is all determined by a Python script that creates and configures the various components, such as the Step Functions, the Lambda functions, the Glue Job and so on. 
 
-a) The role for the CodeBuild needs some additional permissions in the policy so that the build can run successfully. For example, it is creating resources in StepFunctions and SageMaker. Provide a role with permissions to access S3, SageMaker, and S3.
+Each of these components needs some permissions so a number of roles and the related policies need to be set up. It would be possible to set them up in the script, but then your build job will require access to the IAM service to be able to write policies and permissions. This would not always be allowed depending upon corporate policies. 
 
-b) The created StepFunctions need a policy and role to run successfully. This will need permissions to access S3, SageMaker, Lambda, and Step Functions.
+We will assume that this would not be allowed, so we would need to set up the relevant policies.
 
-c) The Glue job needs a role and policy to run successfully. Specifically, it needs CloudWatch, S3, and the AWSGlueServiceRole Amazon managed policy.
+If the policies are already in existance, do we want to reference them directly in the build script? The names might change, and there is some debate about whether it is good practice to put role ARNs directly into souce control.
 
-d) The Lambda that checks the model needs a role and policy so it can run successfully. This needs two Amazon managed policies, the AWSLambdaBasicExecutionRole and the AmazonSagemakerReadOnly policy.
+For this script, the policy names are passed into the CodeBuild project as environment variables, so we need to set those. There are five in total:
 
-e) The Lambda that updates the DynamoDB database requires DynamoDB permissions write permissions to the table you created and the AWSLambdaBasicExecutionRole.
+1. workflow_execution_role - run the step functions permission
+2. sagemaker_execution_role - run sagemaker
+3. glue_role - permissions for the glue job
+4. lambda_role - permission to test the model
+5. model_registry_lambda_role - permission to update the DynamoDB table
 
-Sample policies are available in this project, however, you will need to adapt them for your configuration.
+Each of these roles will require the appropriate policies. Luckily for you, they are in the Amazon account already! They have been given slightly wider permissions than you would normally give, but that is to ensure that the policies will work for all of you.
 
-In reality, as you test out the build, you will see errors showing where additional permissions are required.
+1. In your Build project, click Edit, and then click Environment.
 
-Once you have created the relevant policies, you can set them as environment variables in the CodeBuild project. This is because you don't really want role names in Git necessarily.
+2. Locate the Environment Variables section, and add the following variables:
+
+| Variable Name | Variable Value |
+|---------------|----------------|
+| workflow_execution_role | arn:aws:iam::<ACC_NUMBER>:role/StepFunctionsWorkflowExecutionRole |
+| sagemaker_execution_role | arn:aws:iam::<ACC_NUMBER>:role/AmazonSageMakerExecutionRole |
+| glue_role | arn:aws:iam::<ACC_NUMBER>:role/AWS-Glue-S3-Bucket-Access |
+| lambda_role | arn:aws:iam::<ACC_NUMBER>:role/query_training_status-role |
+| model_registry_lambda_role | arn:aws:iam::<ACC_NUMBER>:role/ModelRegistryAccessRole |
+
+
+When complete it will look something like this:
+
+![Environment Variables](images/environment_variables.png)
+
+3. Once you have set them, click `Update Environment`.
 
 ## 5. Review and Amend the Python Script
 
 1. Using your preferred code editor, open the file `create-step-functions.py`.
 
-2. Have a high level read through of the code. The code is written in a linear fashion to make it easier to review and understand. In a real scenario, you would want to break it down into separate functions and classes
+2. Have a high level read through of the code. The code is written in a linear fashion to make it easier to review and understand. In a real scenario, you would want to break it down into separate functions and classes.
+
+You might be more familiar with Jupyter notebooks. It is possible to run a notebook from the terminal, or alternatively, convert the notebook into a script. Check out this Stackoverflow post if you are interested: https://stackoverflow.com/questions/35545402/how-to-run-an-ipynb-jupyter-notebook-from-terminal
+
 
 ### Update some Resource Names
 
-3. Let's now make the required changes. First off, locate the various resource names declared around line 27.
+Let's now make the required changes. First off, locate the various resource names declared around line 27.
 
 ```
 job_name = 'glue-customer-churn-etl-c020134fb5334562bb3c31e6d02cc77d'
-function_name = 'arn:aws:lambda:eu-west-1:963778699255:function:query-training-status-c020134fb5334562bb3c31e6d02cc77d'
+function_name = 'arn:aws:lambda:eu-west-1:' + account_id + ':function:query-training-status-c020134fb5334562bb3c31e6d02cc77d'
 workflow_name = 'MyInferenceRoutine_c020134fb5334562bb3c31e6d02cc77d'
 ```
-Rename these values so that instead of the c02... unique id on the end of the name, replace it with your initials. For example, 
+1. Rename these values so that instead of the c02... unique id on the end of the name, replace it with your initials. For example, 
 
 ```
 job_name = 'glue-customer-churn-etl-c020134fb5334562bb3c31e6d02cc77d'
@@ -120,30 +150,26 @@ job_name = 'glue-customer-churn-etl-nt'
 
 These names will provide uniqueness between other students, and also will make it easier to identify your resources in the shared AWS account.
 
-4. Now locate the `training_job_name`, `project_name` and `model_name` variables, and add your initials into the values for those as well (around line 35-38):
+2. Now locate the `training_job_name`, `project_name` and `model_name` variables, and add your initials into the values for those as well (around line 35-38):
 
 ```
 training_job_name = "CustomerChurnTrainingJob-nt" + dateAsString
 ```
-### Amend the Glue Job Creation
+### Review the Glue Job Creation
 
 The script will be used to create the Glue job for the ETL. The job is not run from here, but simply created. It will be run as part of the Step Function flow. 
 
-To create a Glue Job, the create_job function is used. To update a job, the update_job function is used. Notice that in the code, the update_job is used, but it doesn't exist yet! 
+1. Note that to create a Glue Job, the create_job function is used. To update a job, the update_job function is used. You can see the try/except block to handle both first run and subsequent runs.
 
 We made the design decision to update the existing job rather than delete the old one because then you can see the history of all of the job runs in Glue. If you delete and recreate it then you will lose the information.
 
 Unfortunately, there is no create or update function, so you have to use one or the other.
 
-1. Locate the line that calls the update_glue_job so that it creates a new glue_job. The documentation is available here: https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/glue.html#Glue.Client.create_job
-
-If you want to, you could amend it so that it does one or the other depending upon whether it already exists.
-
-Note also that the job is uploading a simple CSV. In a real scenario, the data could be in a feature store, or some kind of data lake in S3. 
+2. Note also that the job is uploading a simple CSV. In a real scenario, the data could be in a feature store, or some kind of data lake in S3. 
 
 Changes to this data would be a good reason to rerun the pipeline. You may also make changes to the Glue job in response to changes in your data, or in the way you want to process it.
 
-2. To see how the Glue job works, you can open the file code\glue_etl.py. Glue is beyond the scope of the training, but you can see from the script that it is using Spark. 
+3. To see how the Glue job works, you can open the file code\glue_etl.py. Glue is beyond the scope of the training, but you can see from the script that it is using Spark. 
 
 ### Review the Two Lambda Function Deployments
 
@@ -176,11 +202,8 @@ From around line 184 we are now focused on creating the flow for the Step Functi
 ```
 execution_input = ExecutionInput(schema={
     'TrainingJobName': str,
-    'GlueJobName': str,
     'ModelName': str,
-    'EndpointName': str
-
-})
+ })
 ```
 Now review each step being created in the code and compare it with the steps in the diagram. You will see each step is created one by one.
 
@@ -298,7 +321,7 @@ Sometimes the Glue job can hang and needs to be terminated. It should not take l
 
 ## 6. Set up CodePipeline and CodeDeploy
 
-1. First, you will want to stop the CodeBuild triggering on every Git commit. If you leave it in place, your CodeBuild project will run twice on every commit! This can be done in the CodeBuild project `Source` settings.
+1. First, if you are using GitHub, you will want to stop the CodeBuild triggering on every Git commit. If you leave it in place, your CodeBuild project will run twice on every commit! This can be done in the CodeBuild project `Source` settings.
 
 ![Web Hook](images/webhook.png)
 
@@ -362,6 +385,7 @@ A summary of the options is shown below:
 
 23. That's it done! So now click `Release change` to run your pipeline.
 
+
 ## Troubleshooting
 
 If there are errors, review the error messages either in the CodeBuild log, or in the CodePipeline log if the CodeBuild has worked correctly.
@@ -369,5 +393,8 @@ If there are errors, review the error messages either in the CodeBuild log, or i
 The CodeDeploy error messages are not always that helpful unfortunately, but the most likely cause or errors will be mistakes in your filenames for the Cloudformation template and parameters files, and ensuring that you have the correct permissions in place.
 
 Using the Web console, go to the CloudFormation service and locate your pipeline. If it is not there, then CodeDeploy didn't even get as far as trying to deploy it. If it is there, if it worked it will be there as `CREATE_COMPLETE` in green, or if not, then it will be there in red as `ROLLBACK_COMPLETE`.
+
+IMPORTANT: If it is set on `ROLLBACK_COMPLETE`, you will have to delete the Cloudformation stack before you can run the pipeline again.
+
 
 If you are unsure about your template, try deploying it directly through the Cloudformation service. You will have to pass in the various parameters in the Web console but it will work correctly. That can be a useful way to check whether you have a problem with the template or its parameters or with the CodeDeploy itself.
