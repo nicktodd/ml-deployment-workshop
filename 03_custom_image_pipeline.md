@@ -42,7 +42,7 @@ Broadly, you will need to complete the following tasks.
       - aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin xxx.dkr.ecr.eu-west-1.amazonaws.com 
 ```
 
-3. Review the commands in the build section. We are building a Docker image from the Dockerfile.
+3. Review the commands in the build section. We are building a Docker image from the Dockerfile. In this section, update the account number for your AWS account number.
 
 ```
  build:
@@ -97,14 +97,14 @@ If you are interested in the Algorithm and how it works, feel free to explore th
 
 ## 4. Define the relevant IAM policies and roles
 
-1. Navigate to IAM and locate the role that you just created, and then locate the policy. You will need to check that it has the necessary access to ECR. Specifically it needs to be able to push images and get the login password.
+1. Navigate to IAM and locate the role that you just created, and add the following additional policy - `DockerCodeBuildPolicy`. It has been created for you and will privde necessary access to ECR. Specifically it needs to be able to push images and get the login password.
 
-An example is located in[iam_policy_examples/docker_image_codebuild.json](iam_policy_examples/docker_image_codebuild.json).
+The policy is located in[iam_policy_examples/docker_image_codebuild.json](iam_policy_examples/docker_image_codebuild.json) if you would like to see it.
 
 
 ## 5. Run the CodeBuild Project
 
-1. Commit and push your changes to Git, and this should trigger your build. Check that it behaves as expected.
+1. Commit and push your changes to Git, and if you are using GitHub this will trigger your build. If you are using CodeCommit, manually start a build. Check that succeeds. If y
 
 2. If it works, you will see a new image in your ECR repository. YOu can find it by navigating to the Elastic Container Registry it in the Amazon Web Console.
 
@@ -159,9 +159,8 @@ You can set this pipeline up for yourself using your experience from the previou
 ![Model Creation CodeBuild Step](images/codebuild-config-model.png)
 
 
-5. You can now try running the pipeline. If you are incredibly skillful (or lucky!)
- it will work first time. If not, it is a matter of debugging the process.
-
+5. You can now try running the pipeline. 
+  
 
 ## Reviewing the Deployment
 
