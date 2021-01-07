@@ -4,12 +4,11 @@ In this exercise, you will create a machine learning pipeline for a  ML algorith
 
 This pipeline is much simpler than our Customer Churn Step Function pipeline, as we want to focus in this example, on how a Docker image is created as part of a pipeline.
 
-It could easily be extended to add in more steps if required.
+It could easily be extended to add in more steps if required, such as updating our DynamoDB database table acting as the model registry.
 
 We are also in this model introducing multiple CodeBuild steps.
 
 Just like in the previous exercise, your challenge is to get this pipeline working for yourself!
-
 
 # Your Tasks
 Broadly, you will need to complete the following tasks.
@@ -36,18 +35,21 @@ Broadly, you will need to complete the following tasks.
 2.  Note the various sections. In the first section, we are logging into the Docker registry for our own ECR registry. The parent image is a Ubuntu standard image in Dockerhub.
 
 ```
-  pre_build:
+pre_build:
     commands:
+      - account=$(aws sts get-caller-identity --query Account --output text)
       - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin xxx.dkr.ecr.eu-west-1.amazonaws.com 
+      - aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${account}.dkr.ecr.eu-west-1.amazonaws.com 
 ```
 
 3. Review the commands in the build section. We are building a Docker image from the Dockerfile. In this section, update the account number for your AWS account number.
 
 ```
- build:
+  build:
     commands:
-      - account=$(aws sts get-caller-identity --query Account --output text)      
+      - echo Build started on `date`
+      - echo Building the Docker image...    
+      - cd docker
       - docker build -t anomalyimage:latest .
       - docker tag anomalyimage:latest ${account}.dkr.ecr.eu-west-1.amazonaws.com/anomalyimage:latest
 ```

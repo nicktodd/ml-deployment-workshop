@@ -359,7 +359,7 @@ Note we will have to change this later. It is actually a source artifact, but th
 
 12. For the `Capabilities`, select `CAPABILITY_IAM`. This allows CloudFormation to make role changes.
 
-13. For the Role name, you will need to select a Role that has permissions relating to CloudFormation. You may well need to create one. A sample policy is here.
+13. For the Role name, you will need to select a Role that has permissions relating to CloudFormation  and also SageMakerFullAccess. You may well need to create one with those permissions. 
 
 A summary of the options is shown below:
 
