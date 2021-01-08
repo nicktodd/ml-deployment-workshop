@@ -42,7 +42,7 @@ pre_build:
       - aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${account}.dkr.ecr.eu-west-1.amazonaws.com 
 ```
 
-3. Review the commands in the build section. We are building a Docker image from the Dockerfile. In this section, update the account number for your AWS account number.
+3. Review the commands in the build section. We are building a Docker image from the Dockerfile. In this section, you can see that a variable is being used for the account number.
 
 ```
   build:
