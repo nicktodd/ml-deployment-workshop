@@ -13,15 +13,16 @@ To simplify development and command line tasks, we recommend you create a Cloud9
 
 Setting up Cloud9 is a straightforward process. YOu can create your environment using [these instructions](cloud9.md).
 
+## The Three Core Exercises
 
 The core of these exercises is to complete the following:
 
-1. Deploy an application that consists of a number of Lambda functions that uses some of the AWS high level AWS ML services. The instructions are found [here](01_video_transcode_pipeline.md)
+1. Deploy an application that consists of a number of Lambda functions that uses some of the AWS high level AWS ML services. The instructions are found [here](01_video_transcode_pipeline.md).
 
 
-2. Build a Machine Learning Deployment Pipeline for an ML model that uses the prebuilt SageMaker Algorithm xgboost. The instructions are found [here](02_xgboost_customerchurn_pipeline.md.)
+2. Build a Machine Learning Deployment Pipeline for an ML model that uses the prebuilt SageMaker Algorithm xgboost. The instructions are found [here](02_xgboost_customerchurn_pipeline.md).
 
-3. Build a Machine Learning Deployment Pipeline for an ML model that uses a custom Docker image for a custom algorithm. The instructions are found [here](03_custom_image_pipeline.md)
+3. Build a Machine Learning Deployment Pipeline for an ML model that uses a custom Docker image for a custom algorithm. The instructions are found [here](03_custom_image_pipeline.md).
 
 
 
