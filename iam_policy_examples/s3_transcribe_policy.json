@@ -7,32 +7,11 @@
             "Action": [
                 "polly:*",
                 "transcribe:*",
-                "translate:*"
+                "translate:*",
+                "s3:*",
+                "logs:*"
             ],
             "Resource": "*"
-        },
-        {
-            "Sid": "VisualEditor1",
-            "Effect": "Allow",
-            "Action": "s3:*",
-            "Resource": [
-                "arn:aws:s3:::transcribe.srt.conygre.com",
-                "arn:aws:s3:::transcribe.json.conygre.com",
-                "arn:aws:s3:::transcribe.input.conygre.com",
-                "arn:aws:s3:::transcribe.ssml.conygre.com",
-                "arn:aws:s3:::transcribe.audio.conygre.com",
-                "arn:aws:s3:::transcribe.srt.conygre.com/*",
-                "arn:aws:s3:::transcribe.json.conygre.com/*",
-                "arn:aws:s3:::transcribe.input.conygre.com/*",
-                "arn:aws:s3:::transcribe.ssml.conygre.com/*",
-                "arn:aws:s3:::transcribe.audio.conygre.com/*"
-            ]
-        },
-        {
-            "Sid": "VisualEditor2",
-            "Effect": "Allow",
-            "Action": "logs:*",
-            "Resource": "arn:aws:logs:*:*:*"
         }
     ]
 }

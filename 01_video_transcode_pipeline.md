@@ -126,6 +126,8 @@ response = polly.start_speech_synthesis_task(
 
 15. Replace the endpoint in the code with the one you have copied and save your changes.
 
+16. Finally, towards the end of the Lambda function code, you will see a reference to a Role and Queue (lines 313-314). These two values include an account number and one of them includes a region. Edit the region name to be `eu-west-1` and edit the account number to be your AWS account number. The role name and queue that are being referenced will be available within the account you are using.
+
 ## 4. Review the StepFunctions Flow
 
 The Step Function flow is as follows:
@@ -199,16 +201,9 @@ git push
 
 You will have noticed that all of the Lambdas have the same policy applied to them called S3_Transcribe_Policy.
 
-You will need to create an equivalent policy to assign to your Lambdas. This cannot be done through SAM as it has some policy templates, but not the ability to create specific policies of your own. So you will need to create this policy. 
+To keep it more straightfoward, we have created one policy with the relevant permissions required for all the Lambdas to execute the various functions. You could in theory have a different policy for each Lambda which would be better for the least privilege principle. 
 
-In our example, to keep it more straightfoward, we have created one policy with the relevant permissions required for all the Lambdas to execute the various functions. You could in theory have a different policy for each Lambda which would be better for the least privilege principle. 
-
-1. A sample policy is located here: [IAM Policy](iam_policy_examples/s3_transcribe_policy.json). You will need to create a similar policy in your account and update the SAM file Lambdas to use your policy. 
-
-
-## Optional Build and Deploy the Application Manually
-
-Sometimes it is helpful to try and deploy the application manually. That way you can see how it is meant to be 
+1. The `S3_Transcribe_Policy` is located here: [IAM Policy](iam_policy_examples/s3_transcribe_policy.json). Check that this policy exists in your AWS account. If it does not, check with your instructor, as someone in your group will need to create it, but only one of you! 
 
 ## 7. Set up the CodeBuild Project
 
@@ -234,6 +229,10 @@ An example is located in[iam_policy_examples/transcribe_codebuild.json](iam_poli
 1. Commit and push your changes to Git, and this should trigger your build. Check that it behaves as expected.
 
 2. If it works, you will find a new deployment in CloudFormation and if you visit the Step Function service, you will see your new Step functions.
+
+If it has failed, check the logs in the CodeBuild project to identify the reason for the failure. The most likely cause will be insufficient permissions. Check your IAM policy and rerun. 
+
+Cloudformation failures. If it managed to get started in the creation of the CLoudformation deployment, but fails partway for some reason, you must delete the CloudFormation stack from Cloudformation before you try and rebuild. If you do not, then because you have a CloudFormation template in a Failed state, it refuses to deploy. This must be done manually for now. If it fails to delete (which it does sometimes!), just request to delete again, and it will present a set of checkboxes for the items that must be deleted.
 
 ## 9. Test the Step Functions
 
