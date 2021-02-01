@@ -13,6 +13,16 @@ The application uses the following AWS services
 5. Amazon Media Encoder
 6. StepFunctions
 
+To see an example of what it does, view these two videos. This is an input video:
+
+https://s3.us-east-1.amazonaws.com/transcribe.input.conygre.com/nickspeaking__en-GB__fr.mp4
+
+
+And now here is a translated version of the same video now in French:
+
+https://s3.us-east-1.amazonaws.com/transcribe.output.conygre.com/testmedia.html
+
+
 The core of it is a StepFunction based pipeline that runs through a series of Lambda functions which complete the following tasks:
 
 1. Take a video as an input
@@ -27,6 +37,7 @@ Broadly, you will need to complete the following tasks.
 1. Get the project into your own Git repository.
 2. Set up a CodeBuild Project that will deploy it for you.
 3. Set up the necessary roles and permissions to allow the above to run successfully.
+
 
 
 ## 1. Get the Project into your own Git Repository
@@ -267,19 +278,24 @@ You can see in the screenshot above a Web page called testmedia.html. This file 
 
 2. Using your preferred editor, locate and open `testmedia.html`.
 
-3. Locate the line around #17 that contains the following variable declaration:
+3. Locate the lines around #17 that contains the following variable declaration:
 
 ```
 let videoFolderAndm3Filename = "nickspeaking__en-GB__it";
+const videoUrlPrefix = "/transcribe.output.conygre.com/";
 ```
-4. Edit the variable to refer to your folder name.
 
-5. Now make both the Web page, and your folder and its contents public in S3.
+4. Edit the `videoFolderAndm3Filename` variable to refer to your folder name (the one created with the Media in it).
 
-6. Finally, visit your Web page in a Web browser, and you will see your video. A sample is located here:
+5. Edit the `videoUrlPrefix` to refer to your bucket name.
+
+6. Upload the Web page to the root folder of your bucket.
+
+7. Make both the Web page, and your folder and contents public in S3.
+
+7. Finally, visit your Web page in a Web browser, and you will see your video. A sample is located here:
 
 https://s3.us-east-1.amazonaws.com/transcribe.output.conygre.com/testmedia.html
-
 
 That's it! You have successfully set up and deployed a series of Lambda functions that run in sequence using Step Functions. Your deployment is carried out using SAM, and you used CodeBuild to automate it.
 
