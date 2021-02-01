@@ -198,7 +198,28 @@ Make sure you create any buckets in the same region as where you are deploying t
 
 4. Set the input and output environment variables for the Lambdas. Although we have a global set of environment variables, only the final Lambda uses the set as it stands right now.
 
-5. the SAM command line also provides a convenient file that allows you to set all of the default options. Open the file `samconfig.toml`. One of the entries is the region. You will need to change this to `eu-west-1`. Save your change.
+5. the SAM command line also provides a convenient file that allows you to set all of the default options. Open the file `samconfig.toml`. One of the entries is the region. You will need to change this to `eu-west-1`. 
+
+Another entry is the Deployment bucket. This is used to put the zip files for all the Lambdas ready for deployment. Edit that to be your bucket that you have created for the lab. 
+
+Finally also change the stack name so it is unique.
+
+Save your change.
+
+```
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "video-transcoder"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-c0pcgur5k45i"
+s3_prefix = "video-transcoder"
+region = "eu-west-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+```
+
+
 
 6. Commit and push your changes to git.
 
