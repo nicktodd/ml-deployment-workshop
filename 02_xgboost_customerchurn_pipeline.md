@@ -331,7 +331,7 @@ Sometimes the Glue job can hang and needs to be terminated. It should not take l
 
 ## 6. Set up CodePipeline and CodeDeploy
 
-1. First, if you are using GitHub, you will want to stop the CodeBuild triggering on every Git commit. If you leave it in place, your CodeBuild project will run twice on every commit! This can be done in the CodeBuild project `Source` settings.
+1. First, if you are using GitHub (for those using CodeCommit you can disregard this step), you will want to stop the CodeBuild triggering on every Git commit. If you leave it in place, your CodeBuild project will run twice on every commit! This can be done in the CodeBuild project `Source` settings.
 
 ![Web Hook](images/webhook.png)
 
