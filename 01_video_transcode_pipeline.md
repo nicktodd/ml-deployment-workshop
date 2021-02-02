@@ -198,13 +198,7 @@ Make sure you create any buckets in the same region as where you are deploying t
 
 4. Set the input and output environment variables for the Lambdas. Although we have a global set of environment variables, only the final Lambda uses the set as it stands right now.
 
-5. the SAM command line also provides a convenient file that allows you to set all of the default options. Open the file `samconfig.toml`. One of the entries is the region. You will need to change this to `eu-west-1`. 
-
-Another entry is the Deployment bucket. This is used to put the zip files for all the Lambdas ready for deployment. Edit that to be your bucket that you have created for the lab. 
-
-Finally also change the stack name so it is unique.
-
-Save your change.
+5. When you run SAM deploy at the command line, it creates a convenient file that allows you to set all of the default options. Since we are running SAM using CodeBuild, we will need to edit this file. Open the file `samconfig.toml`. 
 
 ```
 version = 0.1
@@ -212,16 +206,22 @@ version = 0.1
 [default.deploy]
 [default.deploy.parameters]
 stack_name = "video-transcoder"
-s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-c0pcgur5k45i"
-s3_prefix = "video-transcoder"
+s3_bucket = "my-s3-bucket"
+s3_prefix = "video-transcoder-nt"
 region = "eu-west-1"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
 ```
 
+6. Check that the region is set to `eu-west-1`. If not, change it. 
 
+7. Another entry is the S3 bucket. This is used to put the zip files for all the Lambdas ready for deployment. Edit this value to be your bucket that you have created for the lab. 
 
-6. Commit and push your changes to git.
+8. Finally also change the stack name so it is unique. Perhaps put your initials in front of the name.
+
+9. Save your changes.
+
+10. Commit and push your changes to git.
 
 ```
 git add *
