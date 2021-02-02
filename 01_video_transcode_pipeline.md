@@ -251,14 +251,16 @@ To keep it more straightfoward, we have created one policy with the relevant per
 
 6. The rest can be left as defaults, so you can simply select `Create build project`.
 
-7. To set up the permissions, navigate to IAM and locate the role that was just created for the CodeBuild project, and then locate the policy. You will need to check that it has the necessary permissions. 
+7. To set up the permissions, navigate to IAM and locate the role that was just created for the CodeBuild project, and then locate the policy. You will need to check that it has the necessary permissions. It will require the following:
 
-An example is located in[iam_policy_examples/transcribe_codebuild.json](iam_policy_examples/transcribe_codebuild.json).
+  a) AmazonS3FullAccess
+  b) AWSCloudFormationFullAccess
+  c) codebuild-VideoTranscodeBuild-service-role. Note that if this policy does not exist, then create one with the following [permissions](iam_policy_examples/codebuild_lab1.json).
 
 
 ## 8. Run the CodeBuild Project
 
-1. Commit and push your changes to Git, and this should trigger your build. Check that it behaves as expected.
+1. Commit and push your changes to Git trigger your build (the build triggers automatically if you used GitHub). Check that it behaves as expected.
 
 2. If it works, you will find a new deployment in CloudFormation and if you visit the Step Function service, you will see your new Step functions.
 
