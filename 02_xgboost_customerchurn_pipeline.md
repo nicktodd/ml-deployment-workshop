@@ -258,7 +258,7 @@ except:
 ```
 ### Run the Step Function Flow
 
-We can now run the Step Function job which will trigger the glue job, the machine learning, and the Lambdas. 
+Now review the code which will run the Step function flow, triggering the glue job, the machine learning, and the Lambdas. 
 
 Note line 312 where we invoke execute(). Note we pass in a name for the execution, and then also the name we want the Model to have when it gets created by the StepFunction. 
 
