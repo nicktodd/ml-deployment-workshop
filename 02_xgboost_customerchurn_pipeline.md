@@ -359,7 +359,7 @@ Note we will have to change this later. It is actually a source artifact, but th
 
 12. For the `Capabilities`, select `CAPABILITY_IAM`. This allows CloudFormation to make role changes.
 
-13. For the Role name, you will need to select a Role that has permissions relating to CloudFormation  and also SageMakerFullAccess. You may well need to create one with those permissions. 
+13. For the Role name, use the role called `CodeStarWorker-test-CloudFormation`. This should have the appropriate permissions all set for you. 
 
 A summary of the options is shown below:
 
