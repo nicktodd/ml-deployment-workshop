@@ -236,14 +236,24 @@ If we simply recreated the job, we would lose all of our execution history.
 In this case, we have provided the code to create the Step Function for the first time. It is commented out on line 
 
 
-1. Just like with the Glue job, since the step functions have not been deployed before, you will need to uncomment the block that creates a new StepFunction and comment out the block that updates it.
+1. Just like with the Glue job, since the step functions have not been deployed before, it will need to be created on first run. You can see the code for that in this block.
 
 ```
-workflow = Workflow(
-    name=workflow_name,
-    definition=workflow_definition,
-    role=workflow_execution_role,
-    execution_input=execution_input
+try:
+    state_machine_arn = 'arn:aws:states:eu-west-1:' + account_id + ':stateMachine:' + workflow_name
+    workflow = Workflow.attach(state_machine_arn=state_machine_arn)
+    workflow.update(
+        definition = workflow_definition,
+        role=workflow_execution_role
+    )
+except:
+    workflow = Workflow(
+        name=workflow_name,
+        definition=workflow_definition,
+        role=workflow_execution_role,
+        execution_input=execution_input
+    )
+    workflow.create()
 )
 ```
 ### Run the Step Function Flow
