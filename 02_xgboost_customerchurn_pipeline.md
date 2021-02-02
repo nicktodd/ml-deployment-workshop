@@ -97,7 +97,7 @@ For this script, the policy names are passed into the CodeBuild project as envir
 4. lambda_role - permission to test the model
 5. model_registry_lambda_role - permission to update the DynamoDB table
 
-Each of these roles will require the appropriate policies. Luckily for you, they are in the Amazon account already! They have been given slightly wider permissions than you would normally give, but that is to ensure that the policies will work for all of you.
+Each of these roles will require the appropriate policies. Luckily for you, they are in the Amazon account already! They have been given slightly wider permissions than you would normally give, but that is to ensure that the policies will work for all of you. MAKE SURE YOU REMOVE ANY TRAILING WHITESPACE! Any trailing whitespace becomes part of the variable name or value and causes it to fail.
 
 1. In your Build project, click Edit, and then click Environment.
 
