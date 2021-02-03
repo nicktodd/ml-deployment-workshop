@@ -118,7 +118,7 @@ If you would like to review the policy, you can see it in [iam_policy_examples/d
 
 ## 6. Run the CodeBuild Project
 
-1. Commit and push your changes to Git, and if you are using GitHub this will trigger your build. If you are using CodeCommit, manually start a build. Check that succeeds. If y
+1. Commit and push your changes to Git, and if you are using GitHub this will trigger your build. If you are using CodeCommit, manually start a build. Check that succeeds.
 
 2. If it works, you will see a new image in your ECR repository. YOu can find it by navigating to the Elastic Container Registry it in the Amazon Web Console.
 
@@ -172,7 +172,7 @@ You can set this pipeline up for yourself using your experience from the previou
 
 ![Model Creation CodeBuild Step](images/codebuild-config-model.png)
 
-5. The Role for the `CodeDeploy` step can be the same as for lab 2, so use the role called `odeStarWorker-test-CloudFormation`.
+5. The Role for the `CodeDeploy` step can be the same as for lab 2, so use the role called `CodeStarWorker-test-CloudFormation`.
 
 6. Once you are happy with your pipeline you can try running it. 
   
