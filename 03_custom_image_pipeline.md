@@ -107,7 +107,6 @@ The script pushes the Docker image to a registry. This needs to be created so it
 
 12. The rest can be left as defaults, so you can simply select `Create build project`.
 
-13. Finally, in the AWS Web Console, head over the Elastic Container Registry service and create a `Repository` with the same name as your image, eg. `anomalyimage-nt`. Use all the default settings when you create it.
 
 ## 5. Define the relevant IAM policies and roles
 
