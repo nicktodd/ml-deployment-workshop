@@ -25,7 +25,7 @@ Broadly, you will need to complete the following tasks.
 
 1. The repository URL for the example can be found here: https://github.com/nicktodd/custom-image-anomaly
 
-2. Fork this repository into your own Git repository. Your repository needs to be GitHub or CodeCommit as these are supported by CodePipeline and CodeBuild. We suggest you use GitHub since you will be able to authenticate more easily due to company restrictions on Code Commit.
+2. Fork this repository into your own Git repository. Your repository needs to be GitHub or CodeCommit as these are supported by CodePipeline and CodeBuild. 
 
 
 ## 2. Review the buildspec.yml, Dockerfile, and ML Script
@@ -78,8 +78,20 @@ These are the two files that SageMaker will use when it runs the model. To do tr
 
 If you are interested in the Algorithm and how it works, feel free to explore the various files located in the `anomaly-model` directory.
 
+## 3. Create the Docker Registry
 
-## 3. Set up the CodeBuild Project
+The script pushes the Docker image to a registry. This needs to be created so it can push successfully. 
+
+1. In the Web console, to navigate to the Elastic Container Registry service, type in the search bar at the top `ecr` and the click on the `Elastic Container Registry`.
+
+2. At the list of repositories, click the orange `Create Repository` button. 
+
+3. At the `Repository name` field, enter the name you gave your Docker image tag, eg. `anomalyimage-nt`.
+
+4. Leave everything else on the defaults and click `Create Repository`.
+
+
+## 4. Set up the CodeBuild Project
 
 6. Using the `AWS Web Console`, navigate to the `CodeBuild` service.
 
@@ -97,14 +109,14 @@ If you are interested in the Algorithm and how it works, feel free to explore th
 
 13. Finally, in the AWS Web Console, head over the Elastic Container Registry service and create a `Repository` with the same name as your image, eg. `anomalyimage-nt`. Use all the default settings when you create it.
 
-## 4. Define the relevant IAM policies and roles
+## 5. Define the relevant IAM policies and roles
 
 1. Navigate to IAM and locate the role that you just created, and add the following additional policy - `DockerCodeBuildPolicy`. It has been created for you and will privde necessary access to ECR. Specifically it needs to be able to push images and get the login password.
 
-The policy is located in[iam_policy_examples/docker_image_codebuild.json](iam_policy_examples/docker_image_codebuild.json) if you would like to see it.
+If you would like to review the policy, you can see it in [iam_policy_examples/docker_image_codebuild.json](iam_policy_examples/docker_image_codebuild.json).
 
 
-## 5. Run the CodeBuild Project
+## 6. Run the CodeBuild Project
 
 1. Commit and push your changes to Git, and if you are using GitHub this will trigger your build. If you are using CodeCommit, manually start a build. Check that succeeds. If y
 
@@ -112,7 +124,7 @@ The policy is located in[iam_policy_examples/docker_image_codebuild.json](iam_po
 
 3. If it fails, check the error log. The chances are you have either got your repository name wrong or you have not added the relevant permissions to your CodeBuild IAM role policy.
 
-## Create a Second CodeBuild Project to complete the Machine Learning
+## 7. Create a Second CodeBuild Project to complete the Machine Learning
 
 So you now have a CodeBuild step that will create the Docker image. What we will now do is create another CodeBuild step that will do the machine learning. It could be done all in one, but this separation gives us more flexibility when running our actions.
 
@@ -138,9 +150,9 @@ You will also note that it creates a parameter file, similar to the previous exa
 
 7. Commit your changes to Git, and review the project execution in CodeBuild. Fix any errors before proceeding.
 
-## Create the CodePipeline along with the CloudFormation CodeDeploy step.
+## 8. Create the CodePipeline along with the CloudFormation CodeDeploy step.
 
-The process is much the same as the previous Customer Church example. However our build step will involve two Code Builds instead of one.
+The process is much the same as the previous Customer Churn example. However our build step will involve two Code Builds instead of one.
 
 The pipeline should look like the below:
 
@@ -160,11 +172,12 @@ You can set this pipeline up for yourself using your experience from the previou
 
 ![Model Creation CodeBuild Step](images/codebuild-config-model.png)
 
+5. The Role for the `CodeDeploy` step can be the same as for lab 2, so use the role called `odeStarWorker-test-CloudFormation`.
 
-5. You can now try running the pipeline. 
+6. Once you are happy with your pipeline you can try running it. 
   
 
-## Reviewing the Deployment
+## 9. Reviewing the Deployment
 
 1. Using the AWS Web Console, navigate to the SageMaker service, and then click on the Endpoints link on the left.
 
