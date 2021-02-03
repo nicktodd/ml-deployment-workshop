@@ -147,7 +147,9 @@ You will see that an Estimator is created in order for us to do the Machine Lear
 
 You will also note that it creates a parameter file, similar to the previous example ready for deployment by Cloudformation.
 
-7. Commit your changes to Git, and review the project execution in CodeBuild. Fix any errors before proceeding.
+7. The Service role for this second CodeBuild requires the following policies: S3FullAccess, SagemakerFullAccess, and the DockerCodeBuildPolicy.
+
+8. Commit your changes to Git, and review the project execution in CodeBuild. Fix any errors before proceeding.
 
 ## 8. Create the CodePipeline along with the CloudFormation CodeDeploy step.
 
