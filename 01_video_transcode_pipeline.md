@@ -251,12 +251,16 @@ To keep it more straightfoward, we have created one policy with the relevant per
 
 6. The rest can be left as defaults, so you can simply select `Create build project`.
 
-7. To set up the permissions, navigate to IAM and locate the role that was just created for the CodeBuild project, and then locate the policy. You will need to check that it has the necessary permissions. It will require the following:
+7. To set up the permissions, navigate to IAM and locate the role that was just created for the CodeBuild project, and then locate the policy. You will need to check that it has the necessary permissions. The permissions we are using are more broad than they need to be, but keeping it broad will simplify the process for you so can focus on the deployment.
 
-  a) AmazonS3FullAccess
-  b) AWSCloudFormationFullAccess
-  c) codebuild-VideoTranscodeBuild-service-role. Note that if this policy does not exist, then create one with the following [permissions](iam_policy_examples/codebuild_lab1.json).
-
+  * AmazonS3FullAccess - so it can access both the S3 bucket for codebuild artifacts
+  * AWSCloudFormationFullAccess - so it can run your cloudformation template
+  * CloudWatchLogsFullAccess - so you can see the log files
+  * IAMFullAccess - so it can create the necessary policies for the lambdas
+  * StepFunctionsFullAccess - to create the Stepfunctions
+  * CodeCommitFullAccess - so it can access your source code
+  * LambdaFullAccess - so it can deploy the Lambda functions
+  
 
 ## 8. Run the CodeBuild Project
 
