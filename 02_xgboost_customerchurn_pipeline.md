@@ -75,7 +75,7 @@ Broadly, you will need to complete the following tasks.
 9. In the `Filter Policies`, enter in the text `StepFunctionsWorkflowExecutionPolicy`. 
 
 
-10. Select the located policy, and now search for S3FullAccess and attach that policy. Selct the located policy, and now search for LambdaFullAccess, and select the located policy. click `Attach Policy`.
+10. Select the located policy, and now search for `S3FullAccess` and attach that policy. Selct the located policy, and now search for `Lambda_FullAccess`, and select the located policy. click `Attach Policy`.
 
 You will now be setting up the permissions for the various components created by the build script.
 
@@ -83,11 +83,9 @@ You will now be setting up the permissions for the various components created by
 
 The build process for this pipeline is all determined by a Python script that creates and configures the various components, such as the Step Functions, the Lambda functions, the Glue Job and so on. 
 
-Each of these components needs some permissions so a number of roles and the related policies need to be set up. It would be possible to set them up in the script, but then your build job will require access to the IAM service to be able to write policies and permissions. This would not always be allowed depending upon corporate policies. 
+Each of these components needs some permissions so a number of roles and the related policies need to be set up. It would be possible to set them up in the script, but then your build job will require access to the IAM service to be able to write policies and permissions. This would not always be possible depending upon corporate policies. 
 
-We will assume that this would not be allowed, so we would need to set up the relevant policies.
-
-If the policies are already in existance, do we want to reference them directly in the build script? The names might change, and there is some debate about whether it is good practice to put role ARNs directly into souce control.
+In our case, the policies already exist, so we will reference them through environment variables. This means that if role names change, the code doesn't need to be updated, the environment variables would simply be changed.
 
 For this script, the policy names are passed into the CodeBuild project as environment variables, so we need to set those. There are five in total:
 

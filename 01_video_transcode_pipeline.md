@@ -192,7 +192,9 @@ The format is very similar to CloudFormation templates, and you can see that it 
 
 2. The `Globals` section can be used for values that are the same for all resources. You will need to specify six buckets and you will need to create those buckets in your AWS account (or simply point them all to one bucket if you prefer). 
   
-Make sure you create any buckets in the same region as where you are deploying the application - eg. eu-west-1. 
+Make sure you create any buckets in the same region as where you are deploying the application - eg. eu-west-1. Deselect the `Block all public access` option when you create the buckets. 
+
+There is no need to make the buckets themselves public, but we will want to make some individual files public later on.
 
 3. The `Resources` section then defines all the Lambdas, the StateMachine (step functions), and each Lambda is being assigned a LambdaInvoke policy.
 
@@ -274,7 +276,7 @@ Cloudformation failures. If it managed to get started in the creation of the CLo
 
 ## 9. Test the Step Functions
 
-1. To test the application, place a sample video into your bucket that you set up to be the one where videos to be processed end up.
+1. To test the application, place a sample video into your bucket that you set up to be the one where videos to be processed end up. You can use `samples/nickspeaking__en-GB__es.mp4` in the Git repository if you wish.
 
 2. The go to your Step Functions, and click `Start execution`. For the input, enter the following JSON and amend the filename to be the one you uploaded.
 

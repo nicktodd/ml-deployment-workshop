@@ -78,6 +78,14 @@ These are the two files that SageMaker will use when it runs the model. To do tr
 
 If you are interested in the Algorithm and how it works, feel free to explore the various files located in the `anomaly-model` directory.
 
+7. Finally, commit your changes to git using:
+
+```
+git add *
+git commit -m "Updated image name"
+git push
+```
+
 ## 3. Create the Docker Registry
 
 The script pushes the Docker image to a registry. This needs to be created so it can push successfully. 
@@ -133,7 +141,7 @@ So you now have a CodeBuild step that will create the Docker image. What we will
 
 3. In your preferred code editor, open `create-model.py`. In this example, we are not using Step Functions (although we could if wanted to), but rather we are simply creating the model using the SageMaker API. 
 
-4. Locate the Role name variable in line 10 and replace it with your AmazonSagemaker execution role (there is probably one already in your account).
+4. Locate the Role name variable in line 10 and replace it with the AmazonSagemakerExecutionRole in your account (your can find it in the IAM service and search for roles).
 
 5. On line 17, update the prefix variable to also include your initials just before the date stamp. eg:
 
@@ -147,9 +155,11 @@ You will see that an Estimator is created in order for us to do the Machine Lear
 
 You will also note that it creates a parameter file, similar to the previous example ready for deployment by Cloudformation.
 
-7. The Service role for this second CodeBuild requires the following policies: S3FullAccess, SagemakerFullAccess, and the DockerCodeBuildPolicy.
+7. Commit your changes to Git, and review the project execution in CodeBuild. Fix any errors before proceeding.
 
-8. Commit your changes to Git, and review the project execution in CodeBuild. Fix any errors before proceeding.
+8. We now need to give our CodeBuild project the necessary permissions, so in the AWS Web Console, return to your new CodeBuild project. Click on `Build Details`, and then click on the `Service Role`. Add the following policies to the service role:  `S3FullAccess`, `SagemakerFullAccess`, and the `DockerCodeBuildPolicy`.
+
+
 
 ## 8. Create the CodePipeline along with the CloudFormation CodeDeploy step.
 
