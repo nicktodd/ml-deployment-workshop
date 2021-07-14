@@ -42,14 +42,17 @@ Broadly, you will need to complete the following tasks.
 
 ## 1. Get the Project into your own Git Repository
 
-1. The repository URL for the example can be found here: https://github.com/nicktodd/video-translation-stepfunctions
+1. Login to your Cloud9 Development environment, and the use the following command at the terminal to clone the repository containing all the code:
+ 
+```
+git clone https://github.com/nicktodd/video-translation-stepfunctions.git
+```
 
+2. Using the AWS Console, create a Git Repository in Code Commit or use Github if you prefer, and then clone that repository as well into your Cloud9 environment.
 
-2. Using the AWS Console, create a Repository in Code Commit or use Github if you prefer, and then clone it in your Cloud9 environment.
+4. Using the File explorer in Cloud9, copy all the files from the sample project to your empty Git repository folder.
 
-3. Also clone the sample project referenced in step 1, and then copy the code over into your empty repository. 
-
-4. CD into your new repository, and add the files to your Git and push them. This can be done using:
+5. CD into your new repository, and add the files to your Git and push them. This can be done using:
 
 ```
 git add *
@@ -57,12 +60,27 @@ git commit -m "Initial Commit"
 git push
 ```
 
+### Create a Bucket for your Videos
+
+1. Visit the S3 service in the AWS console.
+
+2. Click the `Create Bucket` button.
+
+3. At the `General Configuration`, enter a name for your bucket. Make a note of the name that you use and make sure you follow the AWS naming rules (described on the page)
+
+4. Set the region to the eu-west-1.
+
+5. Deselect the `Block All Public Access` checkbox and then select the acknowledgement box about 'objects might be public'.
+
+6. Leave all the other options as they are and click `Create Bucket`. If you get any errors about your bucket name, fix those and try again.
+
+
 
 ## 2. Review the buildspec.yml
 
 From now on, work in your Git project. If you are in Cloud9, whenever you see a reference to your preferred editor, then that will be your Cloud9 environment.
 
-1. Using your preferred editor, open the `buildspec.yml` file in your new Git project.
+1. Expand your new Git project, and using your preferred editor, open the `buildspec.yml` file.
 
 2.  There is very little in here, since the application has been configured to build and deploy using the AWS Serverless Application Model or SAM. 
 
@@ -133,11 +151,13 @@ response = polly.start_speech_synthesis_task(
 ```
 13. The fifth and final function can be located here: `functions\lambda5_mediaconvert\lambda_handler.js`.  The role of this function is to trigger the MediaEncoder service that will create our final video outputs. This one is written in JavaScript largely because the request parameter is a large JSON object which is easier to pass in from a JavaScript function. If you take a look a the code you will see what is meant!
 
+| :zap:        These final steps involve some changes to the code!   |
+|--------------------------------------------------------------------|
 14. You do need to update one line of code in this Lambda. If you locate line 31 where the MediaConvert endpoint is located. This endpoint is unique per account and region. You need to change this to the endpoint for your AWS Account. To find the URL, using the Amazon Web console, navigate to the MediaConvert service, and click on  `Account`. Ensure you are in the eu-west-1 region, and then copy the API Endpoint to the clipboard. 
 
 15. Replace the endpoint in the code with the one you have copied and save your changes.
 
-16. Finally, towards the end of the Lambda function code, you will see a reference to a Role and Queue (lines 313-314). These two values include an account number and one of them includes a region. Edit the region name to be `eu-west-1` and edit the account number to be your AWS account number. The role name and queue that are being referenced will be available within the account you are using.
+16. Finally, towards the end of the Lambda function code, you will see a reference to a Role and Queue (lines 313-314). These two values include an account number and one of them includes a region. Edit the region name to be `eu-west-1` and edit the account number to be your AWS account number. The role name and queue that are being referenced will be available within the account you are using. To find the account number, in the AWS console, click on the top right drop down menu that contains your username. The account number is located there.
 
 ## 4. Review the StepFunctions Flow
 
@@ -200,6 +220,10 @@ There is no need to make the buckets themselves public, but we will want to make
 
 4. Set the input and output environment variables for the Lambdas. Although we have a global set of environment variables, only the final Lambda uses the set as it stands right now.
 
+
+| :zap:        Some more changes here!   |
+|----------------------------------------|
+
 5. When you run SAM deploy at the command line, it creates a convenient file that allows you to set all of the default options. Since we are running SAM using CodeBuild, we will need to edit this file. Open the file `samconfig.toml`. 
 
 ```
@@ -243,9 +267,9 @@ To keep it more straightfoward, we have created one policy with the relevant per
 
 1. Using the `AWS Web Console`, navigate to the `CodeBuild` service.
 
-2. Click `Create Build Project`. Set the name to be `[YourInitials]-VideoTranscriberBuild`. For the Source, link the project to your Git repository that you created earlier in step 1.
+2. Click `Create Build Project`. Set the name to be `[YourInitials]-VideoTranscriberBuild`. For the `Source`, link the project to your Git repository that you created earlier in step 1.
 
-3. For the Environment, this is where you select the Docker image that will be used to complete your build. We just need a standard Amazon Linux for x86 processors.
+3. For the `Environment`, this is where you select the Docker image that will be used to complete your build. We just need a standard Amazon Linux for x86_64 processors. Make sure you DO NOT pick ARM which is arch64 as it looks very similar, but if you select it your build will take a very long time to complete.
 
 4. Select that you would like to create a Service role.
 
@@ -253,7 +277,7 @@ To keep it more straightfoward, we have created one policy with the relevant per
 
 6. The rest can be left as defaults, so you can simply select `Create build project`.
 
-7. To set up the permissions, navigate to IAM and locate the role that was just created for the CodeBuild project, and then locate the policy. You will need to check that it has the necessary permissions. The permissions we are using are more broad than they need to be, but keeping it broad will simplify the process for you so can focus on the deployment.
+7. To set up the permissions, select `Build Details` for your new CodeBuild project, and then scroll down and click on the Service Role. Now click `Attach Policies`. Add the following Policies:
 
   * AmazonS3FullAccess - so it can access both the S3 bucket for codebuild artifacts
   * AWSCloudFormationFullAccess - so it can run your cloudformation template
@@ -261,12 +285,12 @@ To keep it more straightfoward, we have created one policy with the relevant per
   * IAMFullAccess - so it can create the necessary policies for the lambdas
   * StepFunctionsFullAccess - to create the Stepfunctions
   * CodeCommitFullAccess - so it can access your source code
-  * LambdaFullAccess - so it can deploy the Lambda functions
+  * AWSLambda_FullAccess - so it can deploy the Lambda functions
   
 
 ## 8. Run the CodeBuild Project
 
-1. Commit and push your changes to Git trigger your build (the build triggers automatically if you used GitHub). Check that it behaves as expected.
+1. In your CodeBuild project, click `Run Build`. It will take a while to complete, and you can see the logs as the build progresses.
 
 2. If it works, you will find a new deployment in CloudFormation and if you visit the Step Function service, you will see your new Step functions.
 
