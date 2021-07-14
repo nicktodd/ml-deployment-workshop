@@ -218,11 +218,22 @@ There is no need to make the buckets themselves public, but we will want to make
 
 3. The `Resources` section then defines all the Lambdas, the StateMachine (step functions), and each Lambda is being assigned a LambdaInvoke policy.
 
-4. Set the input and output environment variables for the Lambdas. Although we have a global set of environment variables, only the final Lambda uses the set as it stands right now.
-
 
 | :zap:        Some more changes here!   |
 |----------------------------------------|
+
+4. You will notice multiple bucket environment variables throughout the file. Edit all of them to point to your bucket. Each lambda has an INPUT_BUCKET and an OUTPUT_BUCKET and there are a list of buckets at the top as well. The application supports using different buckets for the various steps, but for simplicity you can use the same one for everything, so for example, you will need to change lines 13-18 to something like where `example.video.bucket` would be your bucket name:
+
+```
+SOURCE_VIDEO_BUCKET: example.video.bucket
+TRANSCRIBED_TEXT_BUCKET: example.video.bucket
+TRANSLATED_SUBTITLES_BUCKET: example.video.bucket
+SSML_BUCKET: example.video.bucket
+POLLY_AUDIO_BUCKET: example.video.bucket
+FINAL_OUTPUT_BUCKET: example.video.bucket
+```
+
+
 
 5. When you run SAM deploy at the command line, it creates a convenient file that allows you to set all of the default options. Since we are running SAM using CodeBuild, we will need to edit this file. Open the file `samconfig.toml`. 
 
@@ -300,11 +311,13 @@ Cloudformation failures. If it managed to get started in the creation of the CLo
 
 ## 9. Test the Step Functions
 
-1. To test the application, place a sample video into your bucket that you set up to be the one where videos to be processed end up. You can use `samples/nickspeaking__en-GB__es.mp4` in the Git repository if you wish.
+1. To test the application, place a sample video into your bucket that you set up to be the one where videos to be processed end up. You can use `samples/nickspeaking__en-GB__es.mp4` in the Git repository if you wish. A simple way to upload it is from the Cloud9 environment, run the following command:
 
-2. The go to your Step Functions, and click `Start execution`. For the input, enter the following JSON and amend the filename to be the one you uploaded.
+```
+ aws s3 cp samples/nickspeaking__en-GB__es.mp4 s3://YOUR_BUCKET_NAME/nickspeaking__en-GB__es.mp4
+```
 
-A sample for this is in the original source project as the file in the root of the project called `sample-trigger-event.json`)
+2. Then go to your Step Functions, and click `Start execution`. For the input, enter the following JSON and amend the filename to be the one you uploaded.
 
 ```
 {
