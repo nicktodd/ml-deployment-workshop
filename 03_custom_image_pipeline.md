@@ -139,7 +139,9 @@ So you now have a CodeBuild step that will create the Docker image. What we will
 
 2. Go through the steps linking it to your Source repository as before, and then for the buildspec file specify a different name this time, as the buildspec is now called `buildspec-model.yml`.
 
-3. In your preferred code editor, open `create-model.py`. In this example, we are not using Step Functions (although we could if wanted to), but rather we are simply creating the model using the SageMaker API. 
+3. Click the `Create build project` button
+
+4. In your preferred code editor (probably Cloud9), open `create-model.py`. In this example, we are not using Step Functions (although we could if wanted to), but rather we are simply creating the model using the SageMaker API. 
 
 4. Locate the Role name variable in line 10 and replace it with the AmazonSagemakerExecutionRole in your account (your can find it in the IAM service and search for roles).
 
