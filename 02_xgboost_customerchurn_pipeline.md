@@ -75,7 +75,7 @@ Broadly, you will need to complete the following tasks.
 9. In the `Filter Policies`, enter in the text `StepFunctionsWorkflowExecutionPolicy`. 
 
 
-10. Select the located policy, and now search for `S3FullAccess` and attach that policy. Selct the located policy, and now search for `Lambda_FullAccess`, and select the located policy. click `Attach Policy`.
+10. Select the located policy, and now search for `S3FullAccess` and attach that policy. Selct the located policy, and now search for `AWSLambda_FullAccess`, and select the located policy. click `Attach Policy`.
 
 You will now be setting up the permissions for the various components created by the build script.
 
@@ -130,28 +130,18 @@ You might be more familiar with Jupyter notebooks. It is possible to run a noteb
 Let's now make the required changes. First off, locate the various resource names declared around line 27.
 
 ```
-job_name = 'glue-customer-churn-etl-c020134fb5334562bb3c31e6d02cc77d'
-function_name = 'arn:aws:lambda:eu-west-1:' + account_id + ':function:query-training-status-c020134fb5334562bb3c31e6d02cc77d'
-workflow_name = 'MyInferenceRoutine_c020134fb5334562bb3c31e6d02cc77d'
+job_name = 'glue-customer-churn-etl-YOURINITIALS'
+function_name = 'arn:aws:lambda:eu-west-1:' + account_id + ':function:query-training-status-YOURINITIALS'
+workflow_name = 'MyInferenceRoutine_YOURINITIALS'
 ```
-1. Rename these values so that instead of the c02... unique id on the end of the name, replace it with your initials. For example, 
-
-```
-job_name = 'glue-customer-churn-etl-c020134fb5334562bb3c31e6d02cc77d'
-```
-
-Could become:
-
-```
-job_name = 'glue-customer-churn-etl-nt'
-```
+1. Rename these values so that instead of YOURINITIALS on the end of the name, replace it with your initials. For example, 
 
 These names will provide uniqueness between other students, and also will make it easier to identify your resources in the shared AWS account.
 
 2. Now locate the `training_job_name`, `project_name` and `model_name` variables, and add your initials into the values for those as well (around line 35-38):
 
 ```
-training_job_name = "CustomerChurnTrainingJob-nt" + dateAsString
+training_job_name = "CustomerChurnTrainingJob-YOURINITIALS" + dateAsString
 ```
 ### Review the Glue Job Creation
 
@@ -367,7 +357,7 @@ Note we will have to change this later. It is actually a source artifact, but th
 
 12. For the `Capabilities`, select `CAPABILITY_IAM`. This allows CloudFormation to make role changes.
 
-13. For the Role name, use the role called `CodeStarWorker-test-CloudFormation`. This should have the appropriate permissions all set for you. 
+13. For the Role name, use the role with a name something like  `CodeStarWorker-test-CloudFormation`. This should have the appropriate permissions all set for you. 
 
 A summary of the options is shown below:
 
