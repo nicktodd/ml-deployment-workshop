@@ -143,7 +143,7 @@ So you now have a CodeBuild step that will create the Docker image. What we will
 
 4. In your preferred code editor (probably Cloud9), open `create-model.py`. In this example, we are not using Step Functions (although we could if wanted to), but rather we are simply creating the model using the SageMaker API. 
 
-4. Locate the Role name variable in line 10 and replace it with the AmazonSagemakerExecutionRole in your account (your can find it in the IAM service and search for roles).
+4. Locate the Role name variable in line 10 and replace it with the fully qualified role name of the AmazonSagemakerExecutionRole in your account (your can find it in the IAM service and search for roles).
 
 5. On line 17, update the prefix variable to also include your initials just before the date stamp. eg:
 

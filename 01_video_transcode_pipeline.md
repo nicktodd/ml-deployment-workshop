@@ -280,7 +280,7 @@ To keep it more straightfoward, we have created one policy with the relevant per
 
 2. Click `Create Build Project`. Set the name to be `[YourInitials]-VideoTranscriberBuild`. For the `Source`, link the project to your Git repository that you created earlier in step 1.
 
-3. For the `Environment`, this is where you select the Docker image that will be used to complete your build. We just need a standard Amazon Linux for x86_64 processors. Make sure you DO NOT pick ARM which is arch64 as it looks very similar, but if you select it your build will take a very long time to complete.
+3. For the `Environment`, this is where you select the Docker image that will be used to complete your build. We need the latest version of the standard Amazon Linux for x86_64 processors. Make sure you DO NOT pick ARM which is arch64 as it looks very similar, but if you select it your build will take a very long time to complete.
 
 4. Select that you would like to create a Service role.
 
