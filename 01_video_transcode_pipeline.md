@@ -353,13 +353,17 @@ const videoUrlPrefix = "/transcribe.output.conygre.com/";
 
 4. Edit the `videoFolderAndm3Filename` variable to refer to your folder name (the one created with the Media in it).
 
-5. Edit the `videoUrlPrefix` to refer to your bucket name.
+5. Edit the `videoUrlPrefix` to have a value of nothing more than a forward slash, "/".
+
+```
+const videoUrlPrefix = "/";
+```
 
 6. Upload the Web page to the root folder of your bucket.
 
 7. Make both the Web page, and your folder and contents public in S3.
 
-7. Finally, visit your Web page in a Web browser, and you will see your video. A sample is located here:
+8. Finally, visit your Web page in a Web browser, and you will see your video. A sample is located here:
 
 https://s3.us-east-1.amazonaws.com/transcribe.output.conygre.com/testmedia.html
 
