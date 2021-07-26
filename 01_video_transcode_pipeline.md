@@ -363,9 +363,7 @@ const videoUrlPrefix = "/";
 
 7. Make both the Web page, and your folder and contents public in S3.
 
-8. Finally, visit your Web page in a Web browser, and you will see your video. A sample is located here:
-
-https://s3.us-east-1.amazonaws.com/transcribe.output.conygre.com/testmedia.html
+8. Finally, visit your Web page in a Web browser, and you will see your video.
 
 That's it! You have successfully set up and deployed a series of Lambda functions that run in sequence using Step Functions. Your deployment is carried out using SAM, and you used CodeBuild to automate it.
 
