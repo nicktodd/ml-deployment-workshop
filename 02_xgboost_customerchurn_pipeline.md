@@ -299,9 +299,8 @@ If you do not add this entry, when you try and reference the file from CodeDeplo
 
 3. Now commit and push your changes to Git (git commit and then git push).
 
-This will trigger CodeBuild to try and run your build for you.
+4. If you are using GitHub then this will trigger CodeBuild so return to your CodeBuild project and see how it performs. If you are using CodeCommit, return to CodeBuild and click **Start Build**. The build job can take anything between 6-10 mins but sometimes as long as 20 mins.
 
-4. Return to the AWS Web console, and you can see the progress of your CodeBuild project.
 
 ![CodeBuild Build](images/codebuild_project.png)
 
