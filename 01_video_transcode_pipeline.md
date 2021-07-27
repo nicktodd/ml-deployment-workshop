@@ -344,26 +344,19 @@ You can see in the screenshot above a Web page called testmedia.html. This file 
 
 2. Using your preferred editor, locate and open `testmedia.html`.
 
-3. Locate the lines around #17 that contains the following variable declaration:
+3. Locate the line #14 that contains the following variable declaration:
 
 ```
 let videoFolderAndm3Filename = "nickspeaking__en-GB__it";
-const videoUrlPrefix = "/transcribe.output.conygre.com/";
 ```
 
 4. Edit the `videoFolderAndm3Filename` variable to refer to your folder name (the one created with the Media in it).
 
-5. Edit the `videoUrlPrefix` to have a value of nothing more than a forward slash, "/".
+5. Upload the Web page to the root folder of your bucket.
 
-```
-const videoUrlPrefix = "/";
-```
+6. Make both the Web page, and your folder and contents public in S3. You can do that by selecting the checkboxes next to the files in the S3 service, and then from the **Actions** menu, select **Make Public**. 
 
-6. Upload the Web page to the root folder of your bucket.
-
-7. Make both the Web page, and your folder and contents public in S3.
-
-8. Finally, visit your Web page in a Web browser, and you will see your video.
+7. To visit the page in the browser, click on the link to your testmedia.html file, and then right click on the link to it and open in a new tab. If all is well you will see your video. If there is a problem, you can use the browser developer tools network tab to see what network requests were sent.
 
 That's it! You have successfully set up and deployed a series of Lambda functions that run in sequence using Step Functions. Your deployment is carried out using SAM, and you used CodeBuild to automate it.
 
