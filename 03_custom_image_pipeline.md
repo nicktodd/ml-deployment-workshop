@@ -139,11 +139,11 @@ So you now have a CodeBuild step that will create the Docker image. What we will
 
 2. Go through the steps linking it to your Source repository as before, and then for the buildspec file specify a different name this time, as the buildspec is now called `buildspec-model.yml`.
 
-3. Click the `Create build project` button
+3. Click the **Create build project** button
 
 4. In your preferred code editor (probably Cloud9), open `create-model.py`. In this example, we are not using Step Functions (although we could if wanted to), but rather we are simply creating the model using the SageMaker API. 
 
-4. Locate the Role name variable in line 10 and replace it with the fully qualified role name of the AmazonSagemakerExecutionRole in your account (your can find it in the IAM service and search for roles).
+4. Locate the Role name variable in line 10 and replace it with the fully qualified role name of the `AmazonSagemakerExecutionRole` in your account (your can find it in the IAM service and search for roles).
 
 5. On line 17, update the prefix variable to also include your initials just before the date stamp. eg:
 
@@ -157,52 +157,108 @@ You will see that an Estimator is created in order for us to do the Machine Lear
 
 You will also note that it creates a parameter file, similar to the previous example ready for deployment by Cloudformation.
 
-7. Commit your changes to Git, and review the project execution in CodeBuild. Fix any errors before proceeding.
+7. Commit and push your changes to Git.
 
 8. We now need to give our CodeBuild project the necessary permissions, so in the AWS Web Console, return to your new CodeBuild project. Click on `Build Details`, and then click on the `Service Role`. Add the following policies to the service role:  `S3FullAccess`, `SagemakerFullAccess`, and the `DockerCodeBuildPolicy`.
 
+9. Run your build in CodeBuild and make sure it works. Fix any errors before proceeding.
 
 
 ## 8. Create the CodePipeline along with the CloudFormation CodeDeploy step.
 
-The process is much the same as the previous Customer Churn example. However our build step will involve two Code Builds instead of one.
+The process is much the same as the previous Customer Churn example. However we will have two build stages instead of one.
 
-The pipeline should look like the below:
+When completed, the pipeline should look like the below:
 
 ![Custom Image Pipeline](images/custom_image_pipeline.png)
 
 You can set this pipeline up for yourself using your experience from the previous pipeline to remind you how to do it. We recommend using the Create Pipeline wizard as it is the least painless option. A few things to bear in mind:
 
-1. You will have to go back into the pipeline to amend the Cloudformation parameter location as you did in the previous exercise as the BuildArtifact option will be missing.
+1. In the **AWS Web console**, go to the **CodePipeline** service. Click **Create Pipeline**.
 
-2. You will also have to add in the second Action Group after the pipeline has been created. Since when you use the wizard it assumes only one build step, but you will have two.
+2. Enter a name for your pipeline eg. `CustomImageAnomalyPipelineYOURINITIALS`.
 
-3. Below is a screen shot of the configuration for your CodeBuild for the Docker image:
+3. Leave everything else as it is and then and click **Next**.
 
-![Docker Image CodeBuild Step](images/codebuild-config-docker.png)
+![Create Anomaly Pipeline](images/create-anomaly-pipeline.png)
 
-4. You must ensure that you add a name to the BuildArtifact of the second Action that building the model, otherwise the CloudFormation template will not get the parameter file made available to it. The tell tail error is rather vague S3 bucket request error. A sample screenshot for your second CodeBuild is shown below:
+
+4. At **Add Source Stage** screen, link it to your CodeCommit repository and select the master branch. Leave everything else as defaults and click **Next**.
+
+5. At the **Build Provider** screen, select **AWS CodeBuild** and then select your Docker build CodeBuild project that you created earlier, leave everything else as default and click **Next**.
+
+| :memo:        | Note that now you are looking at the **Add Deploy Stage** screen. Unfortunately, the wizard doesn't appreciate that you might actually want another build stage, so we will just have to add the Deploy stage and then edit the pipeline afterwards.  |
+|---------------|:------------------------|
+
+6. At the **Add Deploy Stage** screen, set the **Deploy provider** to be `AWS Cloudformation`. Set the **Action mode** to be `Create or Update`.
+
+7. For the **Stack name**, enter `CustomImageAnomalyINITIALS`.
+
+8. For the **Template name** enter select that it is a **Build Artifact** and enter the name of the file in your CodeCommit repository, which is `cloudformation/deploy-model.yml`. Note that it is NOT a build artifact. We will correct it later.
+
+9. Enable the slider for the **Template configuration**. Set the artifact to be a **Build Artifact**, and for the name, enter `cloudformation_parameters.json`.
+
+10. Set the Capabilities to include CAPABILITY_IAM and set the role to be  `CodeStarWorker-test-CloudFormation`.
+
+The configuration should look something like this:
+
+![Code Pipeline Initial Configuration](images/code-pipeline-anomaly.png)
+
+11. Click **Next** and the Create the Pipeline.
+
+12. Once the pipeline has been created, it will run automatically. We dp not want it to run because it is not complete. So click the **Stop Execution** button, then select your execution, and click **Stop and abandon**, and then click **Stop**.
+
+## Modify the Pipeline to Incorporate the additional Build Step
+
+1. Now whilst looking at your pipeline, click the **Edit** button found near the top of your screen.
+   
+2.  your pipeline, locate and click the **Add Stage** button found between your build and deploy stages.
+
+3. In the **Add Stage** dialog enter the name `BuildAnomalyModel` and then click **Add Stage**.
+
+4. In the new stage, click **Add action group**.
+
+5. At the **Edit Action** dialog, enter the Action name as `BuildAnomalyModel`, set the **Action provider** as `AWS CodeBuild`. 
+
+6. Set the **InputArtifacts** as `Source artifacts` (it doesn't actually need any but we have to select one).
+
+6. For the Project name, select your existing CustomAnomalyBuildINITIALS project to be the one to use.
+
+7. Set the **Output artifacts** to `BuildArtifact`. This is important as BuildArtifact is used by the CodeDeploy step.
 
 ![Model Creation CodeBuild Step](images/codebuild-config-model.png)
 
-5. The Role for the `CodeDeploy` step can be the same as for lab 2, so use the role called `CodeStarWorker-test-CloudFormation`.
+8. Click **Done**.
 
-6. Once you are happy with your pipeline you can try running it. 
-  
+You have now added in the new build step. Now we will make a minor modification to the Deploy step to add in the fact that we also need Source artifacts to access the CloudFormation template from Git.
 
-## 9. Reviewing the Deployment
+9. Click **Edit stage** located next to the Deploy stage.
 
-1. Using the AWS Web Console, navigate to the SageMaker service, and then click on the Endpoints link on the left.
+10. Now click on the grey colored pencil shaped edit icon just under the Cloudformation action group.
 
-2. Locate your endpoint in the list and select it.
+11. Under the **Input artifacts**, click **Add** and then select the `SourceArtifact`.
 
-3. You will see your Endpoint is `In Service`.
+12. Now locate the **Template configuration** section and change the **Artifact name** from `BuildArtifact` to `SourceArtifact`.
+
+13. Click **Done**.
+
+14. Click **Done** in the various edit stages, and then click to Save your changes to the pipeline.
+
+## 9. Run the Pipeline and Review the Deployment
+
+1. Now click **Release Change** to run your pipeline and see what happens. It should go through no problem.
+
+2. Using the AWS Web Console, navigate to the SageMaker service, and then click on the Endpoints link on the left.
+
+3. Locate your endpoint in the list and select it.
+
+4. You will see your Endpoint is `In Service`.
 
 ![Endpoint](images/endpoint-inservice.png)
 
-4. Scroll down and you will see the graphs. Locate the link to `View Logs`and click it.
+5. Scroll down and you will see the graphs. Locate the link to `View Logs`and click it.
 
-5. Select the link to the `log stream`. You will see all the health checks returning a healthy HTTP 200 response.
+6. Select the link to the `log stream`. You will see all the health checks returning a healthy HTTP 200 response.
 
 ![Log Events](images/log-events.png)
 
