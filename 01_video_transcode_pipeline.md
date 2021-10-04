@@ -38,7 +38,8 @@ Broadly, you will need to complete the following tasks.
 2. Set up a CodeBuild Project that will deploy it for you.
 3. Set up the necessary roles and permissions to allow the above to run successfully.
 
-
+| :zap:        Your instructor will tell you which region you are using. Make sure you use the right one!   |
+|----------------------------------------|
 
 ## 1. Get the Project into your own Git Repository
 
@@ -68,7 +69,7 @@ git push
 
 3. At the `General Configuration`, enter a name for your bucket. Make a note of the name that you use and make sure you follow the AWS naming rules (described on the page)
 
-4. Set the region to the eu-west-1.
+4. Set the region to the correct one as specified by your instructor. It will probably be either us-east-1 or eu-west-1.
 
 5. Deselect the `Block All Public Access` checkbox and then select the acknowledgement box about 'objects might be public'.
 
@@ -153,11 +154,11 @@ response = polly.start_speech_synthesis_task(
 
 | :zap:        These final steps involve some changes to the code!   |
 |--------------------------------------------------------------------|
-14. You do need to update one line of code in this Lambda. If you locate line 31 where the MediaConvert endpoint is located. This endpoint is unique per account and region. You need to change this to the endpoint for your AWS Account. To find the URL, using the Amazon Web console, navigate to the MediaConvert service, and click on  `Account`. Ensure you are in the eu-west-1 region, and then copy the API Endpoint to the clipboard. 
+14. You do need to update one line of code in this Lambda. If you locate line 31 where the MediaConvert endpoint is located. This endpoint is unique per account and region. You need to change this to the endpoint for your AWS Account and region. To find the URL, using the Amazon Web console, navigate to the MediaConvert service, and click on  `Account`. Ensure you are in the correct region, and then copy the API Endpoint to the clipboard. 
 
 15. Replace the endpoint in the code with the one you have copied and save your changes.
 
-16. Finally, towards the end of the Lambda function code, you will see a reference to a Role and Queue (lines 313-314). These two values include an account number and one of them includes a region. Edit the region name to be `eu-west-1` and edit the account number to be your AWS account number. The role name and queue that are being referenced will be available within the account you are using. To find the account number, in the AWS console, click on the top right drop down menu that contains your username. The account number is located there.
+16. Finally, towards the end of the Lambda function code, you will see a reference to a Role and Queue (lines 313-314). These two values include an account number and one of them includes a region. Edit the region name to be the correct one, eg. `eu-west-1` and edit the account number to be your AWS account number. The role name and queue that are being referenced will be available within the account you are using. To find the account number, in the AWS console, click on the top right drop down menu that contains your username. The account number is located there.
 
 ## 4. Review the StepFunctions Flow
 
@@ -222,7 +223,7 @@ There is no need to make the buckets themselves public, but we will want to make
 | :zap:        Some more changes here!   |
 |----------------------------------------|
 
-4. You will notice multiple bucket environment variables throughout the file. Edit all of them to point to your bucket. Each lambda has an INPUT_BUCKET and an OUTPUT_BUCKET and there are a list of buckets at the top as well. The application supports using different buckets for the various steps, but for simplicity you can use the same one for everything, so for example, you will need to change lines 13-18 to something like where `example.video.bucket` would be your bucket name:
+4. You will notice multiple bucket environment variables throughout the file. First locate the list at the top and set them all to point to your bucket. 
 
 ```
 SOURCE_VIDEO_BUCKET: example.video.bucket
@@ -233,9 +234,9 @@ POLLY_AUDIO_BUCKET: example.video.bucket
 FINAL_OUTPUT_BUCKET: example.video.bucket
 ```
 
+5. In addition, each lambda defined in the file also has an **INPUT_BUCKET** and an **OUTPUT_BUCKET** Change all of these to refer to your bucket as well. 
 
-
-5. When you run SAM deploy at the command line, it creates a convenient file that allows you to set all of the default options. Since we are running SAM using CodeBuild, we will need to edit this file. Open the file `samconfig.toml`. 
+6. When you run SAM deploy at the command line, it creates a convenient file that allows you to set all of the default options. Since we are running SAM using CodeBuild, we will need to edit this file. Open the file `samconfig.toml`. 
 
 ```
 version = 0.1
@@ -250,15 +251,15 @@ confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
 ```
 
-6. Check that the region is set to `eu-west-1`. If not, change it. 
+7. Check that the region is set correctly. If not, change it. 
 
-7. Another entry is the S3 bucket. This is used to put the zip files for all the Lambdas ready for deployment. Edit this value to be your bucket that you have created for the lab. 
+8. Another entry is the S3 bucket. This is used to put the zip files for all the Lambdas ready for deployment. Edit this value to be your bucket that you have created for the lab. 
 
-8. Finally also change the stack name so it is unique. Perhaps put your initials in front of the name.
+9. Finally also change the stack name so it is unique. Perhaps put your initials in front of the name.
 
-9. Save your changes.
+10. Save your changes.
 
-10. Commit and push your changes to git.
+11. Commit and push your changes to git.
 
 ```
 git add *
@@ -280,7 +281,7 @@ To keep it more straightfoward, we have created one policy with the relevant per
 
 2. Click `Create Build Project`. Set the name to be `[YourInitials]-VideoTranscriberBuild`. For the `Source`, link the project to your Git repository that you created earlier in step 1.
 
-3. For the `Environment`, this is where you select the Docker image that will be used to complete your build. We need the latest version of the standard Amazon Linux for x86_64 processors. Make sure you DO NOT pick ARM which is arch64 as it looks very similar, but if you select it your build will take a very long time to complete.
+3. For the `Environment`, this is where you select the Docker image that will be used to complete your build. We need **version 2** of the standard Amazon Linux for `x86_64` processors. DO NOT pick version 3 as it does not contain the Python runtime. Also make sure you **DO NOT** pick an ARM processor which is `arch64` as it looks very similar, but if you select it your build will take a very long time to complete.
 
 4. Select that you would like to create a Service role.
 
@@ -342,21 +343,44 @@ In order to play the video, you require something capable of playing video that 
 
 You can see in the screenshot above a Web page called testmedia.html. This file needs to be edited and then uploaded to the bucket from your source project.
 
-2. Using your preferred editor, locate and open `testmedia.html`.
+2. Back in Cloud9, locate and open `testmedia.html`.
 
 3. Locate the line #14 that contains the following variable declaration:
 
 ```
-let videoFolderAndm3Filename = "nickspeaking__en-GB__it";
+let videoFolderAndm3Filename = "nickspeaking__en-GB__es";
 ```
 
-4. Edit the `videoFolderAndm3Filename` variable to refer to your folder name (the one created with the Media in it).
+This variable contains the video file name, which is used as the folder name for the media files as well.
+
+4. If you used a different video to the example, edit the `videoFolderAndm3Filename` variable to refer to your video filename. Otherwise, nothing needs to be changed and you can proceed.
 
 5. Upload the Web page to the root folder of your bucket.
 
-6. Make both the Web page, and your folder and contents public in S3. You can do that by selecting the checkboxes next to the files in the S3 service, and then from the **Actions** menu, select **Make Public**. 
+```
+aws s3 cp testmedia.html s3://YOUR_BUCKET_NAME/
+```
 
-7. To visit the page in the browser, click on the link to your testmedia.html file, and then right click on the link to it and open in a new tab. If all is well you will see your video. If there is a problem, you can use the browser developer tools network tab to see what network requests were sent.
+6. Make both the Web page, and your folder and contents public in S3. You can do that by visting the S3 service in the Web console.
+   
+7. At the S3 service, select your bucket. Then check the checkboxes next to the folder containing the converted video files, and the testmedia.html file. From the **Actions** menu, select **Make Public**. 
+
+8. To visit the page in the browser, click on the link to your testmedia.html file.  The link you see CANNOT be used. You will need to use the alternative link style for it to be viewed. 
+
+So for example, if your test file as the following URL:
+
+```
+https://s3.amazonaws.com/nick.video.bucket/testmedia.html
+```
+
+You will need to change it to:
+```
+https://nick.video.bucket.s3.us-east-1.amazonaws.com/testmedia.html
+```
+
+Your browser may give you a certificate warning, but you may proceed. If all is well you will see your video!
+
+
 
 That's it! You have successfully set up and deployed a series of Lambda functions that run in sequence using Step Functions. Your deployment is carried out using SAM, and you used CodeBuild to automate it.
 
