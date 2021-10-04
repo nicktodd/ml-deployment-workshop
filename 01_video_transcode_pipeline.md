@@ -302,7 +302,7 @@ To keep it more straightfoward, we have created one policy with the relevant per
 
 ## 8. Run the CodeBuild Project
 
-1. In your CodeBuild project, click `Run Build`. It will take a while to complete, and you can see the logs as the build progresses.
+1. In your CodeBuild project, click `Start Build`. It will take a while to complete, and you can see the logs as the build progresses.
 
 2. If it works, you will find a new deployment in CloudFormation and if you visit the Step Function service, you will see your new Step functions.
 
