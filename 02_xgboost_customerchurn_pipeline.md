@@ -263,7 +263,7 @@ CloudFormation is a standard way to deploy applications on AWS, and the benefit 
 }
 ```
 
-Locate line 523 where you will see a variable set up with that same structure.
+Locate line 361 where you will see a variable set up with that same structure.
 
 This is then saved into a file called `cloudformation_parameters.json` on line 348. Note also that we are waiting for the step function execution to complete. 
  
