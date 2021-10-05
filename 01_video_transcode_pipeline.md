@@ -236,6 +236,11 @@ FINAL_OUTPUT_BUCKET: example.video.bucket
 
 5. In addition, each lambda defined in the file also has an **INPUT_BUCKET** and an **OUTPUT_BUCKET** Change all of these to refer to your bucket as well. 
 
+```
+INPUT_BUCKET: example.video.bucket
+OUTPUT_BUCKET: example.video.bucket
+```
+
 6. When you run SAM deploy at the command line, it creates a convenient file that allows you to set all of the default options. Since we are running SAM using CodeBuild, we will need to edit this file. Open the file `samconfig.toml`. 
 
 ```
@@ -243,10 +248,10 @@ version = 0.1
 [default]
 [default.deploy]
 [default.deploy.parameters]
-stack_name = "video-transcoder"
-s3_bucket = "my-s3-bucket"
+**stack_name = "video-transcoder"**
+**s3_bucket = "my-s3-bucket"**
 s3_prefix = "video-transcoder-nt"
-region = "eu-west-1"
+**region = "eu-west-1"**
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"
 ```
@@ -255,7 +260,7 @@ capabilities = "CAPABILITY_IAM"
 
 8. Another entry is the S3 bucket. This is used to put the zip files for all the Lambdas ready for deployment. Edit this value to be your bucket that you have created for the lab. 
 
-9. Finally also change the stack name so it is unique. Perhaps put your initials in front of the name.
+9. **Important!** Finally also change the stack name so it is unique. Perhaps put your initials in front of the name.
 
 10. Save your changes.
 
@@ -289,7 +294,7 @@ To keep it more straightfoward, we have created one policy with the relevant per
 
 6. The rest can be left as defaults, so you can simply select `Create build project`.
 
-7. To set up the permissions, select `Build Details` for your new CodeBuild project, and then scroll down and click on the Service Role. Now click `Attach Policies`. Add the following Policies:
+7. This step is important as your build will fail to run without the necessary permissions! To set up the permissions, select `Build Details` for your new CodeBuild project, and then scroll down and click on the Service Role. Now click `Attach Policies`. Add the following Policies:
 
   * AmazonS3FullAccess - so it can access both the S3 bucket for codebuild artifacts
   * AWSCloudFormationFullAccess - so it can run your cloudformation template
@@ -304,11 +309,17 @@ To keep it more straightfoward, we have created one policy with the relevant per
 
 1. In your CodeBuild project, click `Run Build`. It will take a while to complete, and you can see the logs as the build progresses.
 
-2. If it works, you will find a new deployment in CloudFormation and if you visit the Step Function service, you will see your new Step functions.
-
 If it has failed, check the logs in the CodeBuild project to identify the reason for the failure. The most likely cause will be insufficient permissions. Check your IAM policy and rerun. 
 
 Cloudformation failures. If it managed to get started in the creation of the CLoudformation deployment, but fails partway for some reason, you must delete the CloudFormation stack from Cloudformation before you try and rebuild. If you do not, then because you have a CloudFormation template in a Failed state, it refuses to deploy. This must be done manually for now. If it fails to delete (which it does sometimes!), just request to delete again, and it will present a set of checkboxes for the items that must be deleted.
+
+
+2. When it builds successfully, navigate to the CloudFormation service and locate your stack (it will have the stack name you selected in step 6 when you edited `samconfig.toml`).
+   
+3. Within your stack, click on the **Resources** tab. and locate the Step functions that were deployed as part of the stack (it is usually the resource second from the bottom).
+   
+4. Click on the link to your step functions and you will see your new Step functions.
+
 
 ## 9. Test the Step Functions
 
@@ -317,6 +328,11 @@ Cloudformation failures. If it managed to get started in the creation of the CLo
 ```
  aws s3 cp samples/nickspeaking__en-GB__es.mp4 s3://YOUR_BUCKET_NAME/nickspeaking__en-GB__es.mp4
 ```
+
+| :zap:        Using your own video?     |
+|----------------------------------------|
+If you wish to use your own video, the end of the filename determines the languages, so in the example, the original language and locale is **en-GB** and the output language is **es**. Follow the same convention for the end of your own video filename and it will be processed correctly.
+
 
 2. Then go to your Step Functions, and click `Start execution`. For the input, enter the following JSON and amend the filename to be the one you uploaded.
 

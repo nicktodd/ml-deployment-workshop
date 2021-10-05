@@ -20,7 +20,7 @@ The Step Function diagram is shown below:
 
 The Step Functions could actually be used to complete the deployment, but since we want more control over our deployments with things such as versioning and the ability to rollback a deployment, we have used CloudFormation instead.
 
-You will be completing all the of exercises in region EU-WEST-1. Please AVOID using US-EAST-1 completely as this has some production artifacts in it.
+Make sure you are in the correct region when creating your artifacts!
 
 
 # Your Tasks
@@ -44,7 +44,7 @@ Broadly, you will need to complete the following tasks.
 
 ## 2. Create the DynamoDB table to maintain the model registry
 
-1. Sign into the AWS Console and select the Ireland (eu-west-1) region.
+1. Sign into the AWS Console and select your class assigned region.
 
 2. Using the `AWS Web Console`, navigate to the `DynamoDB` service.
 
@@ -125,24 +125,12 @@ When complete it will look something like this:
 You might be more familiar with Jupyter notebooks. It is possible to run a notebook from the terminal, or alternatively, convert the notebook into a script. Check out this Stackoverflow post if you are interested: https://stackoverflow.com/questions/35545402/how-to-run-an-ipynb-jupyter-notebook-from-terminal
 
 
-### Update some Resource Names
+### Update Your Region and Resource Names
 
-Let's now make the required changes. First off, locate the various resource names declared around line 27.
+1. Locate line 26 where the region is set. Ensure that this region is your class assigned region. If not, change this variable.
 
-```
-job_name = 'glue-customer-churn-etl-YOURINITIALS'
-function_name = 'arn:aws:lambda:eu-west-1:' + account_id + ':function:query-training-status-YOURINITIALS'
-workflow_name = 'MyInferenceRoutine_YOURINITIALS'
-```
-1. Rename these values so that instead of YOURINITIALS on the end of the name, replace it with your initials. For example, 
+2. Locate line 29 where the variable your_initals is declared. Change the value to be your initials. This variable is used in various names throughout the script to ensure uniqueness.
 
-These names will provide uniqueness between other students, and also will make it easier to identify your resources in the shared AWS account.
-
-2. Now locate the `training_job_name`, `project_name` and `model_name` variables, and add your initials into the values for those as well (around line 35-38):
-
-```
-training_job_name = "CustomerChurnTrainingJob-YOURINITIALS" + dateAsString
-```
 ### Review the Glue Job Creation
 
 The script will be used to create the Glue job for the ETL. The job is not run from here, but simply created. It will be run as part of the Step Function flow. 
@@ -163,21 +151,15 @@ Changes to this data would be a good reason to rerun the pipeline. You may also 
 
 1. Review the two Lambda functions. The code is found in code\query_training_status.py and code\update_model_registry.py.
 
-2. You will need to make a change to the Model Registry updater. Locate line 12 where it sets the table name. You must amend this to refer to the name of the table you created in the earlier part of the exercise.
+2. Have open in front of you **code\update_model_registry.py**, You will need to make a change to the Model Registry updater. Locate line 12 where it sets the table name. You must amend this to refer to the name of the table you created in the earlier part of the exercise. Save and close the file.
 
 In a real scenario, you would probably have this as a shared Lambda that updates a centralised DynamoDB table. We are having you do it in your own tables so you can see what is involved.
 
-3. Return to the create-step-functions.py script, and review the code from around line 92. This code is used to deploy the Lambda functions. Again note that it does not run them. This will be done by the Step Functions. Note too that we are removing and then recreating the Lambdas each time. We could have deployed new versions. But as with Glue, there is no create or update function. 
-
-4. Locate the line that sets the registry_function_name. Amend the name to include your initials on the end.
-
-```
-registry_function_name = "ModelRegistryUpdater"
-```
+3. Return to the **create-step-functions.py** script, and review the code from around line 92. This code is used to deploy the Lambda functions. Again note that it does not run them. This will be done by the Step Functions. Note too that we are removing and then recreating the Lambdas each time. We could have deployed new versions. But as with Glue, there is no create or update function. 
 
 ### Review the Estimator
 
-Locate line 164 or thereabouts where the Estimator is created. This is configured with the various hyperparameters and instance type etc. 
+Locate line 197 or thereabouts where the Estimator is created. This is configured with the various hyperparameters and instance type etc. 
 
 In a real scenario, this is where you are likely to be making changes to these parameters resulting in rerunning the pipeline.
 
@@ -201,7 +183,7 @@ They are still however, to be chained together. That happens next.
 
 ### Review the Chaining of the Steps
 
-The Steps are chained together using the chain() function. You can see this around line 280.
+The Steps are chained together using the chain() function. You can see this around line 308.
 
 ```
 workflow_definition = steps.Chain([
@@ -334,7 +316,7 @@ You will create the Pipeline visually using the AWS Web Console.
 
 ![CodePipeline Creation](images/create_code_pipeline.png)
 
-5. Click `Next`, and then at the Source Provider screen, link it to your Git repository like you did in the CodeBuild project.
+5. Click `Next`, and then at the Source Provider screen, link it to your Git repository like you did in the CodeBuild project. Select `master` for the branch name.
 
 Note the option for the Output artifact format. You have a choice of either a zip of the code, or a full Git clone. If you wish to access Git attributes such as the Commit ID or any other Git attributes, then you will need to select Git clone. For the purposes of what we are doing, the default is sufficient.
 
