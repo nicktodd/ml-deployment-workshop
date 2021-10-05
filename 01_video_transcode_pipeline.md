@@ -307,7 +307,7 @@ To keep it more straightfoward, we have created one policy with the relevant per
 
 ## 8. Run the CodeBuild Project
 
-1. In your CodeBuild project, click `Run Build`. It will take a while to complete, and you can see the logs as the build progresses.
+1. In your CodeBuild project, click `Start Build`. It will take a while to complete, and you can see the logs as the build progresses.
 
 If it has failed, check the logs in the CodeBuild project to identify the reason for the failure. The most likely cause will be insufficient permissions. Check your IAM policy and rerun. 
 
