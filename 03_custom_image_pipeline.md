@@ -39,7 +39,7 @@ pre_build:
     commands:
       - account=$(aws sts get-caller-identity --query Account --output text)
       - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin ${account}.dkr.ecr.eu-west-1.amazonaws.com 
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${account}.dkr.ecr.us-east-1.amazonaws.com 
 ```
 
 3. Review the commands in the build section. We are building a Docker image from the Dockerfile. In this section, you can see that a variable is being used for the account number.
@@ -51,7 +51,7 @@ pre_build:
       - echo Building the Docker image...    
       - cd docker
       - docker build -t anomalyimage:latest .
-      - docker tag anomalyimage:latest ${account}.dkr.ecr.eu-west-1.amazonaws.com/anomalyimage:latest
+      - docker tag anomalyimage:latest ${account}.dkr.ecr.us-east-1.amazonaws.com/anomalyimage:latest
 ```
 
 4. You must change the image name in the file to be something unique to you. You could simply add your initials on the end of the image name and tag. In simple terms, change every reference to `anomalyimage` to something else, eg. `anomalyimage-nt`.
@@ -63,7 +63,7 @@ Note the commands we are using to obtain our account ID. The service being used 
 ```
 post_build:
     commands:
-      - docker push ${account}.dkr.ecr.eu-west-1.amazonaws.com/anomalyimage:latest
+      - docker push ${account}.dkr.ecr.us-east-1.amazonaws.com/anomalyimage:latest
 ```
 5. You will also need to change the name here from `anomalyimage` to your new name. So make the change now and save the file.
 
@@ -118,7 +118,7 @@ The script pushes the Docker image to a registry. This needs to be created so it
 
 ## 5. Define the relevant IAM policies and roles
 
-1. Navigate to IAM and locate the role that you just created, and add the following additional policy - `DockerCodeBuildPolicy`. It has been created for you and will privde necessary access to ECR. Specifically it needs to be able to push images and get the login password.
+1. Whilst in your codebuild project, click on **Build Details** and then scroll down to the **Environment** section. Click on the link to the service role. Add the following additional policy - `DockerCodeBuildPolicy`. It has been created for you and will privde necessary access to ECR. Specifically it needs to be able to push images and get the login password.
 
 If you would like to review the policy, you can see it in [iam_policy_examples/docker_image_codebuild.json](iam_policy_examples/docker_image_codebuild.json).
 
