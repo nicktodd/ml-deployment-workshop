@@ -1,7 +1,7 @@
 # Creating a Basic Glue Job
 
 ## Introduction
-In this exercise you will create a Glue job that will process and analyse some data using Spark.
+In this exercise you will create a Glue job that will process and analyse some data using Spark. Note that this exercise will not work using the Safari browser when launching your Jupyter notebook. See https://stackoverflow.com/questions/71690575/aws-glue-jupyter-notebook-failed-to-authenticate-user
 
 
 ## Part 1 Upload the Data
