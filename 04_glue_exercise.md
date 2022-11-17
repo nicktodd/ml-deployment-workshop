@@ -179,7 +179,7 @@ from awsglue.dynamicframe import DynamicFrame
 10. Now add the following code to write the dynamic frame to S3 using the S3 connector built into the DynamicFrame functionality.
 
 ```
-dynamic_frame_write = DynamicFrame.fromDF(data_frame_aggregated, glueContext, "dynamic_frame_write")
+dynamic_frame_write = DynamicFrame.fromDF(cleaned_df, glueContext, "dynamic_frame_write")
 
 #Write data back to S3
 glueContext.write_dynamic_frame.from_options(
