@@ -186,7 +186,7 @@ glueContext.write_dynamic_frame.from_options(
     frame = dynamic_frame_write,
     connection_type = "s3",
     connection_options = {
-        "path": s3_write_path,
+        "path": s3_write_location,
         #Here you could create S3 prefixes according to a values in specified columns
         #"partitionKeys": ["decade"]
     },
